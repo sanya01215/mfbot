@@ -50,6 +50,5 @@ public class MFBot extends TelegramLongPollingBot {
     public void onUpdatesReceived(List<Update> updates) {
         super.onUpdatesReceived(updates);
     }
-    //comment
 }
 

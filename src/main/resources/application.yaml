@@ -2,3 +2,14 @@ bot:
   auth:
     username: MakeFr_Bot
     token: 2052876180:AAEFrNl-2U3t-oHEhBmtNvwc4bbFyfzIJ9w
+spring:
+  data:
+    mongodb:
+      repositories:
+        enabled: true
+      host: 127.0.0.1
+      port: 27017
+      database: mfmongodb
+      username: root
+      password: rootpassword
+      connectionSize: 200

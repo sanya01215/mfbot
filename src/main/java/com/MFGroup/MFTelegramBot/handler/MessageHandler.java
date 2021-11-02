@@ -1,113 +1,156 @@
 package com.MFGroup.MFTelegramBot.handler;
 
 
+import com.MFGroup.MFTelegramBot.cache.Cache;
+import com.MFGroup.MFTelegramBot.domain.Position;
+import com.MFGroup.MFTelegramBot.domain.User;
+import com.MFGroup.MFTelegramBot.handler.keyboard.KeyBoard;
 import com.MFGroup.MFTelegramBot.messagesender.MessageSender;
+import com.MFGroup.MFTelegramBot.persistance.UserRepository;
 import org.springframework.stereotype.Component;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.objects.Message;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.InlineKeyboardMarkup;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.ReplyKeyboardMarkup;
-import org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.InlineKeyboardButton;
-import org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.KeyboardRow;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.LinkedHashMap;
+import java.util.Map;
 
 @Component
 public class MessageHandler implements Handler<Message> {
+    private final UserRepository userRepo;
+
     public final MessageSender messageSender;
 
-    public MessageHandler(MessageSender messageSender) {
+    private SendMessage sendMessage;
+
+    private String receivedMsg;
+
+    private String chatId;
+
+    private ReplyKeyboardMarkup replyKeyboardMarkup;
+
+    private InlineKeyboardMarkup inlineKeyboardMarkup;
+
+    private final Cache<User> cache;
+
+    private final Map<String,Boolean> quizAnswers;
+    {
+        quizAnswers = new LinkedHashMap<>();
+        quizAnswers.put("eng", false);
+        quizAnswers.put("ukr", false);
+        quizAnswers.put("rus", false);
+        quizAnswers.put("it", false);
+        quizAnswers.put("psychology", false);
+        quizAnswers.put("sport", false);
+        quizAnswers.put("drawing", false);
+        quizAnswers.put("nature", false);
+        quizAnswers.put("business", false);
+        quizAnswers.put("cryptocurrency", false);
+        quizAnswers.put("travel", false);
+        quizAnswers.put("law", false);
+    }
+
+
+    public MessageHandler(UserRepository userRepo, MessageSender messageSender, Cache<User> cache) {
+        this.userRepo = userRepo;
         this.messageSender = messageSender;
+        this.cache = cache;
     }
 
     @Override
     public void choose(Message message) {
-        ReplyKeyboardMarkup replyKeyboardMarkup = null;
-        InlineKeyboardMarkup inlineKeyboardMarkup = null;
+        receivedMsg = message.getText().trim();
+        chatId = message.getChatId().toString();
+        sendMessage = new SendMessage();
+        sendMessage.setChatId(message.getChatId().toString());
+        User user = cache.findById(message.getChatId());
 
-        String msg = message.getText();
-        SendMessage sendMessage = new SendMessage();
-        sendMessage.setChatId(String.valueOf(message.getChatId()));
+        //for user who are already in cache
+        if (user != null) {
+            switch (user.getPosition()) {
+                case END_REGISTRATION:
+                    if (receivedMsg.equals("Get all users")){
+                    sendMessage.setText(userRepo.findAll().toString());
+                }
+                    else if(receivedMsg.equals("Delete all users")){
+                        userRepo.deleteAll();
+                        sendMessage.setText(userRepo.findAll().toString());
+                    }
 
-        switch (msg.trim()) {
-            case "Меню":
-                replyKeyboardMarkup = keyboardInit();
-                sendMessage.setText("Выберите что Вас интересует");
-                break;
-            case "Инфо":
-                sendMessage.setText("Бот создан в развлекательных и учебных целях. За предложениями и вопросами обращайтесь к @Siabruk. Надеюсь Вам понравится =)");
-                break;
-            default:
-                replyKeyboardMarkup = keyboardInit();
-                sendMessage.setText("Пожалуйста выберите пункт из меню :");
-                break;
+                    break;
+                case INPUT_FULLNAME:
+                    if (message.hasText()) {
+                        user.setName(message.getText());
+                        user.setPosition(Position.INPUT_AGE);
+                        sendMessage.setText("Type your age");
+                    }
+                    else {
+                        sendMessage.setText("Name was incorrect. Please type again.");
+                    }
+                    break;
+
+                case INPUT_AGE:
+                        try {
+                            user.setAge( Integer.parseInt(message.getText()));
+                            user.setPosition(Position.INPUT_CITY);
+                            sendMessage.setText("Type your City");
+                        } catch (IllegalArgumentException e) {
+                            sendMessage.setText("Age was incorrect. Please type again.");
+                            e.printStackTrace();
+                        }
+                        break;
+
+
+                case INPUT_CITY:
+                    if (message.hasText()) {
+                        user.setCity(message.getText());
+                        sendMessage.setText("Now quiz. Tap on bottom which topic you prefer");
+                        sendMessage.setReplyMarkup(KeyBoard.regQuizAttachKbInit(quizAnswers));
+                        user.setPosition(Position.INPUT_QUIZ);
+                    }
+                    else {
+                        sendMessage.setText("City was incorrect. Please type again.");
+                    }
+                    break;
+
+                case INPUT_QUIZ:
+
+                        user.setPosition(Position.NONE);
+                        sendMessage.setText("QUIZ...");
+                    break;
+
+                default :
+                    sendMessage.setText("Alright... Have a nice day!");
+                    break;
+            }
+
         }
-        sendMessage.enableHtml(true);
-        if (replyKeyboardMarkup != null) sendMessage.setReplyMarkup(replyKeyboardMarkup);
-        else sendMessage.setReplyMarkup(inlineKeyboardMarkup);
 
+        //for new users (start session)
+        else {
+            switch (receivedMsg) {
+                case "/start":
+//                    replyKeyboardMarkup = mainKbInit(replyKeyboardMarkup);
+                    sendMessage.setText("Hello! There is The Bot for meeting some new interesting people : \n" +
+                            "Please answer for a few questions, that help us to find you suitable person. ");
+                    sendMessage.setReplyMarkup(KeyBoard.continueCancelKbInit());
+                    break;
+
+                case "Ok. Let's go!":
+                    sendMessage.setText("Type your Full Name");
+                    User newUser = new User();
+                    newUser.setPosition(Position.INPUT_FULLNAME);
+                    newUser.setChatId(message.getChatId());
+                    cache.add(newUser);
+                    break;
+
+                default :
+                    sendMessage.setText("Alright... Have a nice day!");
+                    break;
+            }
+        }
         messageSender.sendMessage(sendMessage);
-    }
-
-
-    private ReplyKeyboardMarkup keyboardInit() {
-        ReplyKeyboardMarkup replyKeyboardMarkup = new ReplyKeyboardMarkup();
-        ArrayList<KeyboardRow> keyboard = new ArrayList<>();
-        KeyboardRow keyboardFirstRow = new KeyboardRow();
-        KeyboardRow keyboardSecondRow = new KeyboardRow();
-
-        replyKeyboardMarkup.setSelective(true);
-        replyKeyboardMarkup.setResizeKeyboard(true);
-        replyKeyboardMarkup.setOneTimeKeyboard(false);
-
-        keyboard.clear();
-        keyboardFirstRow.clear();
-        keyboardSecondRow.clear();
-        keyboardFirstRow.add("Цитата");
-        keyboardFirstRow.add("Новости");
-        keyboardSecondRow.add("Курс валют");
-        keyboardSecondRow.add("Инфо");
-        keyboard.add(keyboardFirstRow);
-        keyboard.add(keyboardSecondRow);
-
-        replyKeyboardMarkup.setKeyboard(keyboard);
-        return replyKeyboardMarkup;
-    }
-
-    private InlineKeyboardMarkup attachCurrencyKeyboardInit() {
-
-        InlineKeyboardMarkup inlineKeyboardMarkup = new InlineKeyboardMarkup();
-
-        InlineKeyboardButton inlineKeyboardButton1 = new InlineKeyboardButton();
-        InlineKeyboardButton inlineKeyboardButton2 = new InlineKeyboardButton();
-        InlineKeyboardButton inlineKeyboardButton3 = new InlineKeyboardButton();
-
-        inlineKeyboardButton1.setText("Bitcoin");
-        inlineKeyboardButton1.setCallbackData("BTC");
-
-        inlineKeyboardButton2.setText("Ethereum");
-        inlineKeyboardButton2.setCallbackData("ETH");
-
-        inlineKeyboardButton3.setText("Dogecoin");
-        inlineKeyboardButton3.setCallbackData("DOGE");
-
-        List<InlineKeyboardButton> keyboardButtonsRow1 = new ArrayList<>();
-        List<InlineKeyboardButton> keyboardButtonsRow2 = new ArrayList<>();
-        List<InlineKeyboardButton> keyboardButtonsRow3 = new ArrayList<>();
-
-        keyboardButtonsRow1.add(inlineKeyboardButton1);
-        keyboardButtonsRow2.add(inlineKeyboardButton2);
-        keyboardButtonsRow3.add(inlineKeyboardButton3);
-
-
-        List<List<InlineKeyboardButton>> rowList = new ArrayList<>();
-        rowList.add(keyboardButtonsRow1);
-        rowList.add(keyboardButtonsRow2);
-        rowList.add(keyboardButtonsRow3);
-
-        inlineKeyboardMarkup.setKeyboard(rowList);
-        return inlineKeyboardMarkup;
     }
 
 }
