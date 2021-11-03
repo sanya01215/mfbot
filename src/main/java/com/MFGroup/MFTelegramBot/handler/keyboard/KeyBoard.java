@@ -5,10 +5,7 @@ import org.telegram.telegrambots.meta.api.objects.replykeyboard.ReplyKeyboardMar
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.InlineKeyboardButton;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.KeyboardRow;
 
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 public class KeyBoard {
 
@@ -27,7 +24,7 @@ public class KeyBoard {
         //kb buttons
         keyboardFirstRow.add("Get all users");
         keyboardFirstRow.add("Delete all users");
-        keyboardSecondRow.add("None");
+        keyboardSecondRow.add("Find best match user");
         keyboard.add(keyboardFirstRow);
         keyboard.add(keyboardSecondRow);
 
@@ -57,22 +54,21 @@ public class KeyBoard {
         return replyKeyboardMarkup;
     }
 
-    public static InlineKeyboardMarkup regQuizAttachKbInit(Map<String,Boolean> quizMap) {
+    public static InlineKeyboardMarkup regQuizAttachKbInit(Set<String> quizSet) {
         InlineKeyboardMarkup inlineKeyboardMarkup = new InlineKeyboardMarkup();
         List<List<InlineKeyboardButton>> rowList = new ArrayList<>();
-        Iterator<Map.Entry<String, Boolean>> mapIterator = quizMap.entrySet().iterator();
+        Iterator<String> setIterator = quizSet.iterator();
 //add quiz buttons
-        while(mapIterator.hasNext()){
-            Map.Entry<String, Boolean> entry;
+        while(setIterator.hasNext()){
+            String s;
             List<InlineKeyboardButton> keyboardButtonsRow1 = new ArrayList<>();
             for(int i=2;i>0;i--) {
-                if(mapIterator.hasNext()) {
-                    entry = mapIterator.next();
+                if(setIterator.hasNext()) {
+                    s = setIterator.next();
                     InlineKeyboardButton inlBtn = InlineKeyboardButton.builder()
-                            .callbackData(entry.getKey().toString())
-                            .text(entry.getKey().toString())
+                            .callbackData(s)
+                            .text(s)
                             .build();
-
                     keyboardButtonsRow1.add(inlBtn);
                 }
             }

@@ -4,67 +4,84 @@ import org.springframework.data.annotation.Id;
 
 import java.util.Calendar;
 import java.util.Date;
-import java.util.LinkedHashMap;
-import java.util.Map;
+import java.util.Set;
+
 public class User {
     @Id
     private String id;
     private Long chatId;
     private String username;
+    private Date regDate;
+
     private String name;
     private int age;
     private String city;
-    private Date regDate;
     private Position position;
+    private String tags;
 
-    private Map<String,Boolean> quizAnswers;
-    public User() {
-        quizAnswers = new LinkedHashMap<>();
-        quizAnswers.put("eng", false);
-        quizAnswers.put("ukr", false);
-        quizAnswers.put("rus", false);
-        quizAnswers.put("it", false);
-        quizAnswers.put("psychology", false);
-        quizAnswers.put("sport", false);
-        quizAnswers.put("drawing", false);
-        quizAnswers.put("nature", false);
-        quizAnswers.put("business", false);
-        quizAnswers.put("cryptocurrency", false);
-        quizAnswers.put("travel", false);
-        quizAnswers.put("law", false);
-    }
+    private Set<String> quizAnswers;
 
-    public User(String username, Long chatId, String name) {
+    public User(String username, Long chatId) {
         regDate = Calendar.getInstance().getTime();
         this.username = username;
-        this.name = name;
         this.chatId = chatId;
-        quizAnswers = new LinkedHashMap<>();
-        quizAnswers.put("eng", false);
-        quizAnswers.put("ukr", false);
-        quizAnswers.put("rus", false);
-        quizAnswers.put("it", false);
-        quizAnswers.put("psychology", false);
-        quizAnswers.put("sport", false);
-        quizAnswers.put("drawing", false);
-        quizAnswers.put("nature", false);
-        quizAnswers.put("business", false);
-        quizAnswers.put("cryptocurrency", false);
-        quizAnswers.put("travel", false);
-        quizAnswers.put("law", false);
     }
 
-
-    public Position getPosition() {
-        return position;
+    public User() {
     }
 
-    public void setPosition(Position position) {
-        this.position = position;
+    @Override
+    public String toString() {
+        if(tags==null) {
+            StringBuilder tagsSb = new StringBuilder();
+            for (String s : quizAnswers) {
+                tagsSb.append(s).append(" || ");
+            }
+            tags=tagsSb.toString();
+        }
+        return String.format(
+                "\nClient: %s\n Username: @%s\n ChatId: %s\n Reg time: %tT %tD \n His tags: \n %s\n",
+                name, username, chatId, regDate, regDate, tags);
+    }
+
+    public Long getChatId() {
+        return chatId;
+    }
+
+    public void setChatId(Long chatId) {
+        this.chatId = chatId;
+    }
+
+    public String getUsername() {
+        return username;
+    }
+
+    public void setUsername(String username) {
+        this.username = username;
+    }
+
+    public Date getRegDate() {
+        return regDate;
+    }
+
+    public void setRegDate(Date regDate) {
+        this.regDate = regDate;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
     }
 
     public int getAge() {
         return age;
+    }
+
+    public void setAge(int age) {
+        this.age = age;
     }
 
     public String getCity() {
@@ -75,51 +92,27 @@ public class User {
         this.city = city;
     }
 
-    public void setAge(int age) {
-        this.age = age;
+    public Position getPosition() {
+        return position;
     }
 
-    public Long getChatId() {
-        return chatId;
+    public void setPosition(Position position) {
+        this.position = position;
     }
 
-    public String getUsername() {
-        return username;
+    public String getTags() {
+        return tags;
     }
 
-    public String getName() {
-        return name;
+    public void setTags(String tags) {
+        this.tags = tags;
     }
 
-    public Date getRegDate() {
-        return regDate;
-    }
-
-
-    public void setChatId(Long chatId) {
-        this.chatId = chatId;
-    }
-
-    public void setUsername(String username) {
-        this.username = username;
-    }
-
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    public void setRegDate(Date regDate) {
-        this.regDate = regDate;
-    }
-
-    public Map<String, Boolean> getQuizAnswers() {
+    public Set<String> getQuizAnswers() {
         return quizAnswers;
     }
 
-    @Override
-    public String toString() {
-        return String.format(
-                "Client %s, username @%s, with chatId %s 's been reg at %tT %tD %n . His tags: \n %s",
-                name, username, chatId, regDate, regDate, quizAnswers);
+    public void setQuizAnswers(Set<String> quizAnswers) {
+        this.quizAnswers = quizAnswers;
     }
 }

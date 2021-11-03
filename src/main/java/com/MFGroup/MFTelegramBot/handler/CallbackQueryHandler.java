@@ -10,8 +10,8 @@ import org.springframework.stereotype.Component;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.objects.CallbackQuery;
 
-import java.util.Calendar;
-import java.util.Map;
+import java.util.LinkedHashSet;
+import java.util.Set;
 
 @Component
 public class CallbackQueryHandler implements Handler<CallbackQuery> {
@@ -24,10 +24,27 @@ public class CallbackQueryHandler implements Handler<CallbackQuery> {
 
     private SendMessage sendMessage;
 
+    private final Set<String> quizAllQuestions;
+
+    Set<String> quizAnswers ;
     public CallbackQueryHandler(MessageSender messageSender, Cache<User> cache, UserRepository userRepo) {
+        quizAllQuestions = new LinkedHashSet<>();
+        quizAllQuestions.add("eng");
+        quizAllQuestions.add("ukr");
+        quizAllQuestions.add("rus");
+        quizAllQuestions.add("it");
+        quizAllQuestions.add("psychology");
+        quizAllQuestions.add("sport");
+        quizAllQuestions.add("drawing");
+        quizAllQuestions.add("nature");
+        quizAllQuestions.add("business");
+        quizAllQuestions.add("cryptocurrency");
+        quizAllQuestions.add("travel");
+        quizAllQuestions.add("law");
         this.messageSender = messageSender;
         this.cache = cache;
         this.userRepo = userRepo;
+        quizAnswers= new LinkedHashSet<>();
     }
 
     @Override
@@ -37,21 +54,21 @@ public class CallbackQueryHandler implements Handler<CallbackQuery> {
         sendMessage.setChatId(String.valueOf(chatId));
 
         User user = cache.findById(chatId);
-        Map<String, Boolean> quizAnswers ;
         String cbqData = callbackQuery.getData();
+
         if (user != null && user.getPosition() == Position.INPUT_QUIZ) {
-            quizAnswers = user.getQuizAnswers();
-            if (quizAnswers.get(cbqData) != null) {
-                quizAnswers.put(cbqData, true);
+            if (quizAllQuestions.contains(cbqData)) {
+                quizAnswers.add(cbqData);
             }
         }
-        if(cbqData.equals("OK. Done it!") && user !=null){
+        if(cbqData.equals("OK. Done it!") && user !=null)
+        {
             sendMessage.setText("All done. Congratulations!!!");
             sendMessage.setReplyMarkup(KeyBoard.mainKbInit());
             user.setPosition(Position.END_REGISTRATION);
-            user.setUsername(callbackQuery.getMessage().getChat().getUserName());
-            user.setRegDate(Calendar.getInstance().getTime());
+            user.setQuizAnswers(quizAnswers);
             userRepo.save(user);
+            quizAnswers= new LinkedHashSet<>();
         }
         else{
             sendMessage.setText("One more");

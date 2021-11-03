@@ -7,14 +7,14 @@ import com.MFGroup.MFTelegramBot.domain.User;
 import com.MFGroup.MFTelegramBot.handler.keyboard.KeyBoard;
 import com.MFGroup.MFTelegramBot.messagesender.MessageSender;
 import com.MFGroup.MFTelegramBot.persistance.UserRepository;
+import com.MFGroup.MFTelegramBot.service.SearchUsers;
 import org.springframework.stereotype.Component;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.objects.Message;
-import org.telegram.telegrambots.meta.api.objects.replykeyboard.InlineKeyboardMarkup;
-import org.telegram.telegrambots.meta.api.objects.replykeyboard.ReplyKeyboardMarkup;
 
-import java.util.LinkedHashMap;
-import java.util.Map;
+import java.util.LinkedHashSet;
+import java.util.Set;
+
 
 @Component
 public class MessageHandler implements Handler<Message> {
@@ -22,60 +22,62 @@ public class MessageHandler implements Handler<Message> {
 
     public final MessageSender messageSender;
 
+    public final SearchUsers searchUsers;
+
     private SendMessage sendMessage;
-
-    private String receivedMsg;
-
-    private String chatId;
-
-    private ReplyKeyboardMarkup replyKeyboardMarkup;
-
-    private InlineKeyboardMarkup inlineKeyboardMarkup;
 
     private final Cache<User> cache;
 
-    private final Map<String,Boolean> quizAnswers;
-    {
-        quizAnswers = new LinkedHashMap<>();
-        quizAnswers.put("eng", false);
-        quizAnswers.put("ukr", false);
-        quizAnswers.put("rus", false);
-        quizAnswers.put("it", false);
-        quizAnswers.put("psychology", false);
-        quizAnswers.put("sport", false);
-        quizAnswers.put("drawing", false);
-        quizAnswers.put("nature", false);
-        quizAnswers.put("business", false);
-        quizAnswers.put("cryptocurrency", false);
-        quizAnswers.put("travel", false);
-        quizAnswers.put("law", false);
-    }
+    private final Set<String> quizAnswers;
 
-
-    public MessageHandler(UserRepository userRepo, MessageSender messageSender, Cache<User> cache) {
+    public MessageHandler(UserRepository userRepo, MessageSender messageSender, SearchUsers searchUsers, Cache<User> cache) {
+        quizAnswers = new LinkedHashSet<>();
+        quizAnswers.add("eng");
+        quizAnswers.add("ukr");
+        quizAnswers.add("rus");
+        quizAnswers.add("it");
+        quizAnswers.add("psychology");
+        quizAnswers.add("sport");
+        quizAnswers.add("drawing");
+        quizAnswers.add("nature");
+        quizAnswers.add("business");
+        quizAnswers.add("cryptocurrency");
+        quizAnswers.add("travel");
+        quizAnswers.add("law");
         this.userRepo = userRepo;
         this.messageSender = messageSender;
+        this.searchUsers = searchUsers;
         this.cache = cache;
     }
 
     @Override
     public void choose(Message message) {
-        receivedMsg = message.getText().trim();
-        chatId = message.getChatId().toString();
+        String receivedMsg=message.getText().trim();
+        String chatId=message.getChatId().toString();
+
         sendMessage = new SendMessage();
-        sendMessage.setChatId(message.getChatId().toString());
+        sendMessage.setChatId(chatId);
+
         User user = cache.findById(message.getChatId());
 
         //for user who are already in cache
         if (user != null) {
+
             switch (user.getPosition()) {
                 case END_REGISTRATION:
                     if (receivedMsg.equals("Get all users")){
                     sendMessage.setText(userRepo.findAll().toString());
-                }
+                    }
                     else if(receivedMsg.equals("Delete all users")){
                         userRepo.deleteAll();
                         sendMessage.setText(userRepo.findAll().toString());
+                    }
+                    else if(receivedMsg.equals("Find best match user")){
+                        sendMessage.setText("Your best match user: " + searchUsers.findBestTagMatchUser(user.getQuizAnswers(),user.getChatId()));
+                    }
+                    else{
+                        sendMessage.setText("Something wrong.(End REG P default text");
+                        cache.removeById(message.getChatId());
                     }
 
                     break;
@@ -115,7 +117,6 @@ public class MessageHandler implements Handler<Message> {
                     break;
 
                 case INPUT_QUIZ:
-
                         user.setPosition(Position.NONE);
                         sendMessage.setText("QUIZ...");
                     break;
@@ -131,7 +132,6 @@ public class MessageHandler implements Handler<Message> {
         else {
             switch (receivedMsg) {
                 case "/start":
-//                    replyKeyboardMarkup = mainKbInit(replyKeyboardMarkup);
                     sendMessage.setText("Hello! There is The Bot for meeting some new interesting people : \n" +
                             "Please answer for a few questions, that help us to find you suitable person. ");
                     sendMessage.setReplyMarkup(KeyBoard.continueCancelKbInit());
@@ -139,7 +139,7 @@ public class MessageHandler implements Handler<Message> {
 
                 case "Ok. Let's go!":
                     sendMessage.setText("Type your Full Name");
-                    User newUser = new User();
+                    User newUser = new User(message.getChat().getUserName(),message.getChatId());
                     newUser.setPosition(Position.INPUT_FULLNAME);
                     newUser.setChatId(message.getChatId());
                     cache.add(newUser);
