@@ -1,8 +1,5 @@
-package com.MFGroup.MFTelegramBot.bot;
+package com.MFGroup.MFTelegramBot.controller;
 
-import com.MFGroup.MFTelegramBot.processor.Processor;
-import com.MFGroup.MFTelegramBot.service.SendMessageService;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 import org.telegram.telegrambots.bots.TelegramLongPollingBot;
@@ -16,18 +13,9 @@ public class MFBot extends TelegramLongPollingBot {
     private String userName;
     @Value("${bot.auth.token}")
     private String token;
-    private Processor processor;
+    private final Processor processor;
 
-
-    @Autowired
-    public void setSendMessageService(SendMessageService sendMessageService) {
-        this.sendMessageService = sendMessageService;
-    }
-
-    private SendMessageService sendMessageService;
-
-    @Autowired
-    public void setProcessor(Processor processor) {
+    public MFBot(Processor processor) {
         this.processor = processor;
     }
 

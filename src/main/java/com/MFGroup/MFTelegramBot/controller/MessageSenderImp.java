@@ -1,6 +1,5 @@
-package com.MFGroup.MFTelegramBot.messagesender;
+package com.MFGroup.MFTelegramBot.controller;
 
-import com.MFGroup.MFTelegramBot.bot.MFBot;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;

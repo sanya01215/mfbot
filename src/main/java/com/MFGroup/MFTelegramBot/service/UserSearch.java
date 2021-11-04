@@ -1,7 +1,7 @@
 package com.MFGroup.MFTelegramBot.service;
 
-import com.MFGroup.MFTelegramBot.domain.User;
-import com.MFGroup.MFTelegramBot.persistance.UserRepository;
+import com.MFGroup.MFTelegramBot.dao.UserRepository;
+import com.MFGroup.MFTelegramBot.model.User;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -10,7 +10,7 @@ import java.util.Objects;
 import java.util.Set;
 
 @Service
-public class SearchUsers {
+public class UserSearch {
     @Autowired
     private UserRepository userRepo;
     public User findBestTagMatchUser(Set<String> matchTagSet, Long currentUserChatId){

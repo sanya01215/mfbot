@@ -1,4 +1,4 @@
-package com.MFGroup.MFTelegramBot.domain;
+package com.MFGroup.MFTelegramBot.model;
 
 import org.springframework.data.annotation.Id;
 
@@ -16,7 +16,7 @@ public class User {
     private String name;
     private int age;
     private String city;
-    private Position position;
+    private UserPosition userPosition;
     private String tags;
 
     private Set<String> quizAnswers;
@@ -92,12 +92,12 @@ public class User {
         this.city = city;
     }
 
-    public Position getPosition() {
-        return position;
+    public UserPosition getPosition() {
+        return userPosition;
     }
 
-    public void setPosition(Position position) {
-        this.position = position;
+    public void setPosition(UserPosition userPosition) {
+        this.userPosition = userPosition;
     }
 
     public String getTags() {
@@ -115,4 +115,5 @@ public class User {
     public void setQuizAnswers(Set<String> quizAnswers) {
         this.quizAnswers = quizAnswers;
     }
+
 }

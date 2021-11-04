@@ -1,4 +1,4 @@
-package com.MFGroup.MFTelegramBot.messagesender;
+package com.MFGroup.MFTelegramBot.controller;
 
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.methods.updatingmessages.EditMessageText;

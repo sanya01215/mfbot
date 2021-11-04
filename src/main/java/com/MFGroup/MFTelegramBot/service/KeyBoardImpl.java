@@ -1,15 +1,19 @@
-package com.MFGroup.MFTelegramBot.handler.keyboard;
+package com.MFGroup.MFTelegramBot.service;
 
+import org.springframework.stereotype.Service;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.InlineKeyboardMarkup;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.ReplyKeyboardMarkup;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.InlineKeyboardButton;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.KeyboardRow;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Set;
+@Service
+public class KeyBoardImpl implements Keyboard{
 
-public class KeyBoard {
-
-    public static ReplyKeyboardMarkup mainKbInit() {
+    public ReplyKeyboardMarkup mainKbInit() {
         ReplyKeyboardMarkup replyKeyboardMarkup = new ReplyKeyboardMarkup();
         //kb init
         ArrayList<KeyboardRow> keyboard = new ArrayList<>();
@@ -33,7 +37,7 @@ public class KeyBoard {
         return replyKeyboardMarkup;
     }
 
-    public static ReplyKeyboardMarkup continueCancelKbInit() {
+    public  ReplyKeyboardMarkup continueCancelKbInit() {
         ReplyKeyboardMarkup replyKeyboardMarkup = new ReplyKeyboardMarkup();
         //kb init
         ArrayList<KeyboardRow> keyboard = new ArrayList<>();
@@ -54,7 +58,7 @@ public class KeyBoard {
         return replyKeyboardMarkup;
     }
 
-    public static InlineKeyboardMarkup regQuizAttachKbInit(Set<String> quizSet) {
+    public  InlineKeyboardMarkup regQuizAttachKbInit(Set<String> quizSet) {
         InlineKeyboardMarkup inlineKeyboardMarkup = new InlineKeyboardMarkup();
         List<List<InlineKeyboardButton>> rowList = new ArrayList<>();
         Iterator<String> setIterator = quizSet.iterator();

@@ -1,4 +1,4 @@
-package com.MFGroup.MFTelegramBot.cache;
+package com.MFGroup.MFTelegramBot.dao;
 
 import java.util.List;
 
