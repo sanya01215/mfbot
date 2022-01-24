@@ -8,15 +8,15 @@ import org.telegram.telegrambots.meta.api.objects.Update;
 import java.util.List;
 
 @Component
-public class MFBot extends TelegramLongPollingBot {
+public class BotClient extends TelegramLongPollingBot {
     @Value("${bot.auth.username}")
     private String userName;
     @Value("${bot.auth.token}")
     private String token;
-    private final Processor processor;
+    private final BotClientProcessor botClientProcessor;
 
-    public MFBot(Processor processor) {
-        this.processor = processor;
+    public BotClient(BotClientProcessor botClientProcessor) {
+        this.botClientProcessor = botClientProcessor;
     }
 
     @Override
@@ -31,7 +31,7 @@ public class MFBot extends TelegramLongPollingBot {
 
     @Override
     public void onUpdateReceived(Update update) {
-        processor.process(update);
+        botClientProcessor.process(update);
     }
 
     @Override

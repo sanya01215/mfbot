@@ -1,6 +1,7 @@
-package com.MFGroup.MFTelegramBot.service.handler;
+package com.MFGroup.MFTelegramBot.service.msghandler;
 
-import com.MFGroup.MFTelegramBot.controller.MessageSender;
+import com.MFGroup.MFTelegramBot.dao.impl.BotData;
+import com.MFGroup.MFTelegramBot.service.msgsender.MessageSender;
 import com.MFGroup.MFTelegramBot.factory.KeyboardFactory;
 import org.springframework.stereotype.Component;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
@@ -9,16 +10,15 @@ import com.MFGroup.MFTelegramBot.model.User;
 import com.MFGroup.MFTelegramBot.dao.*;
 import org.telegram.telegrambots.meta.api.objects.*;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.*;
-import com.MFGroup.MFTelegramBot.model.*;
 
 
 import java.util.ArrayList;
 import java.util.List;
 
-import static com.MFGroup.MFTelegramBot.model.UserPositionEnum.INPUT_QUIZ;
+import static com.MFGroup.MFTelegramBot.dao.impl.BotData.UserPositionEnum.INPUT_QUIZ;
 
 @Component
-public class CallbackQueryHandler implements Handler<CallbackQuery> {
+public class CallbackQueryHandlerService implements Handler<CallbackQuery> {
 
     private final KeyboardFactory keyBoard;
     private final MessageSender messageSender;
@@ -30,7 +30,7 @@ public class CallbackQueryHandler implements Handler<CallbackQuery> {
     private User user;
     private Integer lastMessageId;
 
-    public CallbackQueryHandler(KeyboardFactory keyBoard, MessageSender messageSender, Cache<User> cache, UserRepository userRepo) {
+    public CallbackQueryHandlerService(KeyboardFactory keyBoard, MessageSender messageSender, Cache<User> cache, UserRepository userRepo) {
         this.editMessageText = new EditMessageText();
         this.sendMessage = new SendMessage();
         this.keyBoard = keyBoard;
@@ -85,7 +85,7 @@ public class CallbackQueryHandler implements Handler<CallbackQuery> {
     }
 
     private void userEndRegistration() {
-        user.setPosition(UserPositionEnum.END_REGISTRATION);
+        user.setPosition(BotData.UserPositionEnum.END_REGISTRATION);
         user.setQuizAnswers(quizAnswers);
         userRepo.save(user);
         quizAnswers = new ArrayList<>();

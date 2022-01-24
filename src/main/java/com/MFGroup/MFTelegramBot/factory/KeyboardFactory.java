@@ -7,7 +7,7 @@ import org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.*;
 import java.util.*;
 
 import static com.MFGroup.MFTelegramBot.factory.KeyboardNameEnum.*;
-import static com.MFGroup.MFTelegramBot.model.BotData.KeyboardFactoryButtonsText.*;
+import static com.MFGroup.MFTelegramBot.dao.impl.BotData.KeyboardFactoryButtonsText.*;
 
 @Component
 public class KeyboardFactory {

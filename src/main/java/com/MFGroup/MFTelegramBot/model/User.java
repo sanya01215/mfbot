@@ -1,5 +1,6 @@
 package com.MFGroup.MFTelegramBot.model;
 
+import com.MFGroup.MFTelegramBot.dao.impl.BotData;
 import lombok.Builder;
 import lombok.Data;
 
@@ -18,7 +19,7 @@ public class User {
     private String name;
     private int age;
     private String city;
-    private UserPositionEnum position;
+    private BotData.UserPositionEnum position;
     private String tags;
 
     private List<String> quizAnswers;

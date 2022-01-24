@@ -1,24 +1,24 @@
-package com.MFGroup.MFTelegramBot.service.handler;
+package com.MFGroup.MFTelegramBot.service.msghandler;
 
 
-import com.MFGroup.MFTelegramBot.controller.MessageSender;
+import com.MFGroup.MFTelegramBot.dao.impl.BotData;
+import com.MFGroup.MFTelegramBot.service.msgsender.MessageSender;
 import com.MFGroup.MFTelegramBot.dao.Cache;
 import com.MFGroup.MFTelegramBot.dao.UserRepository;
 import com.MFGroup.MFTelegramBot.factory.KeyboardFactory;
 import com.MFGroup.MFTelegramBot.model.User;
-import com.MFGroup.MFTelegramBot.model.UserPositionEnum;
-import com.MFGroup.MFTelegramBot.service.UserSearch;
+import com.MFGroup.MFTelegramBot.service.userlogic.UserSearch;
 import org.springframework.stereotype.Component;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.objects.Chat;
 import org.telegram.telegrambots.meta.api.objects.Message;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.ReplyKeyboard;
 
-import static com.MFGroup.MFTelegramBot.model.BotData.MessageHandlerSpeech.*;
+import static com.MFGroup.MFTelegramBot.dao.impl.BotData.MessageHandlerSpeech.*;
 
 
 @Component
-public class MessageHandler implements Handler<Message> {
+public class MessageHandlerService implements Handler<Message> {
 
     private final KeyboardFactory keyBoard;
 
@@ -34,7 +34,7 @@ public class MessageHandler implements Handler<Message> {
 
     private final RegMessageHandler regMessageHandler;
 
-    public MessageHandler(KeyboardFactory keyBoard, UserRepository userRepo, MessageSender messageSender, UserSearch userSearch, Cache<User> cache, RegMessageHandler regMessageHandler) {
+    public MessageHandlerService(KeyboardFactory keyBoard, UserRepository userRepo, MessageSender messageSender, UserSearch userSearch, Cache<User> cache, RegMessageHandler regMessageHandler) {
         this.keyBoard = keyBoard;
         this.userRepo = userRepo;
         this.messageSender = messageSender;
@@ -79,7 +79,7 @@ public class MessageHandler implements Handler<Message> {
                 .username(chat.getUserName())
                 .inTelegramName(chat.getFirstName() + chat.getLastName())
                 .inTelegramBio(chat.getBio())
-                .position(UserPositionEnum.INPUT_FULLNAME)
+                .position(BotData.UserPositionEnum.INPUT_FULLNAME)
                 .chatId(chat.getId())
                 .build();
     }

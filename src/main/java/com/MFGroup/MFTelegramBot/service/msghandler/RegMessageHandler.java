@@ -1,12 +1,12 @@
-package com.MFGroup.MFTelegramBot.service.handler;
+package com.MFGroup.MFTelegramBot.service.msghandler;
 
-import com.MFGroup.MFTelegramBot.controller.MessageSender;
+import com.MFGroup.MFTelegramBot.dao.impl.BotData;
+import com.MFGroup.MFTelegramBot.service.msgsender.MessageSender;
 import com.MFGroup.MFTelegramBot.dao.Cache;
 import com.MFGroup.MFTelegramBot.dao.UserRepository;
 import com.MFGroup.MFTelegramBot.factory.KeyboardFactory;
 import com.MFGroup.MFTelegramBot.model.User;
-import com.MFGroup.MFTelegramBot.model.UserPositionEnum;
-import com.MFGroup.MFTelegramBot.service.UserSearch;
+import com.MFGroup.MFTelegramBot.service.userlogic.UserSearch;
 import org.springframework.stereotype.Component;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.objects.Message;
@@ -54,7 +54,7 @@ public class RegMessageHandler implements Handler<Message> {
             case INPUT_CITY:
                 sendMessage.setText(inputCity(message));
                 sendMessage.setReplyMarkup(keyBoard.getRegQuizInlineKeyBoard());
-                user.setPosition(UserPositionEnum.INPUT_QUIZ);
+                user.setPosition(BotData.UserPositionEnum.INPUT_QUIZ);
                 break;
             default:
                 sendMessage.setText("Invalid state. Reg Message class error, method choose");
@@ -89,7 +89,7 @@ public class RegMessageHandler implements Handler<Message> {
         String answer;
         if (message.hasText()) {
             user.setName(message.getText());
-            user.setPosition(UserPositionEnum.INPUT_AGE);
+            user.setPosition(BotData.UserPositionEnum.INPUT_AGE);
             answer = "Type your age";
         } else {
             answer = "Name was incorrect. Please type again.";
@@ -101,7 +101,7 @@ public class RegMessageHandler implements Handler<Message> {
         String answer;
         try {
             user.setAge(Integer.parseInt(message.getText()));
-            user.setPosition(UserPositionEnum.INPUT_CITY);
+            user.setPosition(BotData.UserPositionEnum.INPUT_CITY);
             answer = "Type your City";
         } catch (IllegalArgumentException e) {
             answer = "Age was incorrect. Please type again.";
@@ -115,7 +115,7 @@ public class RegMessageHandler implements Handler<Message> {
         if (message.hasText()) {
             user.setCity(message.getText());
             answer = "Now quiz. Please, tap all buttons which topic you prefer to conversation\nand then tap <Ok, done it!> : ";
-            user.setPosition(UserPositionEnum.INPUT_QUIZ);
+            user.setPosition(BotData.UserPositionEnum.INPUT_QUIZ);
         } else {
             answer = "City was incorrect. Please type again.";
         }

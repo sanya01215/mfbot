@@ -1,4 +1,4 @@
-package com.MFGroup.MFTelegramBot.model;
+package com.MFGroup.MFTelegramBot.dao.impl;
 
 import java.util.List;
 
@@ -17,5 +17,13 @@ public class BotData {
         public static final String TYPE_NAME="Type your Full Name";
         public static final String PROBLEM="Problem in massage handler parsing messages";
 
+    }
+    public enum UserPositionEnum {
+        INPUT_FULLNAME,
+        INPUT_AGE,
+        INPUT_CITY,
+        INPUT_QUIZ,
+        NONE,
+        END_REGISTRATION
     }
 }
