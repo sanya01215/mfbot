@@ -1,5 +1,6 @@
-package com.MFGroup.MFTelegramBot.dao;
+package com.MFGroup.MFTelegramBot.dao.impl;
 
+import com.MFGroup.MFTelegramBot.dao.Cache;
 import com.MFGroup.MFTelegramBot.model.User;
 import org.springframework.stereotype.Component;
 

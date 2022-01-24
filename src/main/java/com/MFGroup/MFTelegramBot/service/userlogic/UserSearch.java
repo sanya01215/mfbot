@@ -1,4 +1,4 @@
-package com.MFGroup.MFTelegramBot.service;
+package com.MFGroup.MFTelegramBot.service.userlogic;
 
 import com.MFGroup.MFTelegramBot.dao.UserRepository;
 import com.MFGroup.MFTelegramBot.model.User;

@@ -1,10 +1,10 @@
 package com.MFGroup.MFTelegramBot.controller;
 
-import com.MFGroup.MFTelegramBot.dao.CacheImpl;
+import com.MFGroup.MFTelegramBot.dao.impl.CacheImpl;
 import com.MFGroup.MFTelegramBot.model.User;
-import com.MFGroup.MFTelegramBot.service.handler.CallbackQueryHandler;
-import com.MFGroup.MFTelegramBot.service.handler.MessageHandler;
-import com.MFGroup.MFTelegramBot.service.handler.RegMessageHandler;
+import com.MFGroup.MFTelegramBot.service.msghandler.CallbackQueryHandlerService;
+import com.MFGroup.MFTelegramBot.service.msghandler.MessageHandlerService;
+import com.MFGroup.MFTelegramBot.service.msghandler.RegMessageHandler;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.telegram.telegrambots.meta.api.objects.CallbackQuery;
@@ -12,11 +12,11 @@ import org.telegram.telegrambots.meta.api.objects.Message;
 import org.telegram.telegrambots.meta.api.objects.Update;
 
 @Component
-public class DefaultProcessor implements Processor {
+public class BotClientProcessorImpl implements BotClientProcessor {
     @Autowired
-    private   CallbackQueryHandler callbackQueryHandler;
+    private CallbackQueryHandlerService callbackQueryHandlerService;
     @Autowired
-    private MessageHandler messageHandler;
+    private MessageHandlerService messageHandlerService;
     @Autowired
     private RegMessageHandler regMessageHandler;
     @Autowired
@@ -24,18 +24,18 @@ public class DefaultProcessor implements Processor {
 
     private User user;
 
-    public DefaultProcessor() {
+    public BotClientProcessorImpl() {
     }
 
     @Override
     public void executeMessage(Message message) {
         if(cache.findById(message.getChatId()) != null)regMessageHandler.choose(message);
-        else messageHandler.choose(message);
+        else messageHandlerService.choose(message);
     }
 
     @Override
     public void executeCallBackQuery(CallbackQuery callbackQuery) {
-        callbackQueryHandler.choose(callbackQuery);
+        callbackQueryHandlerService.choose(callbackQuery);
     }
 
     @Override

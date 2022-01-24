@@ -1,14 +1,15 @@
-package com.MFGroup.MFTelegramBot.controller;
+package com.MFGroup.MFTelegramBot.service.msgsender;
 
+import com.MFGroup.MFTelegramBot.controller.BotClient;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Service;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.methods.updatingmessages.EditMessageText;
 import org.telegram.telegrambots.meta.api.objects.Message;
 import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
-@Component
-public class MessageSenderImp implements MessageSender{
-    public MFBot bot;
+@Service
+public class MessageSenderImp implements MessageSender {
+    public BotClient bot;
 
     @Override
     public Message sendMessage(SendMessage sendMessage) {
@@ -32,7 +33,7 @@ public class MessageSenderImp implements MessageSender{
     }
 
     @Autowired
-    public void setBot(MFBot bot) {
+    public void setBot(BotClient bot) {
         this.bot = bot;
     }
 
