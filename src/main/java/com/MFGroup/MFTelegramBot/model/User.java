@@ -1,25 +1,27 @@
 package com.MFGroup.MFTelegramBot.model;
 
-import org.springframework.data.annotation.Id;
+import lombok.Builder;
+import lombok.Data;
 
 import java.util.Calendar;
 import java.util.Date;
-import java.util.Set;
-
+import java.util.List;
+@Data
+@Builder
 public class User {
-    @Id
-    private String id;
     private Long chatId;
     private String username;
+    private String inTelegramName;
+    private String inTelegramBio;
     private Date regDate;
 
     private String name;
     private int age;
     private String city;
-    private UserPosition userPosition;
+    private UserPositionEnum position;
     private String tags;
 
-    private Set<String> quizAnswers;
+    private List<String> quizAnswers;
 
     public User(String username, Long chatId) {
         regDate = Calendar.getInstance().getTime();
@@ -32,88 +34,15 @@ public class User {
 
     @Override
     public String toString() {
-        if(tags==null) {
+        if (tags == null && quizAnswers!=null) {
             StringBuilder tagsSb = new StringBuilder();
             for (String s : quizAnswers) {
                 tagsSb.append(s).append(" || ");
             }
-            tags=tagsSb.toString();
+            tags = tagsSb.toString();
         }
         return String.format(
-                "\nClient: %s\n Username: @%s\n ChatId: %s\n Reg time: %tT %tD \n His tags: \n %s\n",
-                name, username, chatId, regDate, regDate, tags);
+                "\nPerson: %s\n Telegram name %s\n Username: @%s\n ChatId: %s\n Telegram Bio: %s\n Reg time: %tT %tD \n His tags: \n %s\n",
+                name, inTelegramName, username, chatId,inTelegramBio ,regDate, regDate, tags);
     }
-
-    public Long getChatId() {
-        return chatId;
-    }
-
-    public void setChatId(Long chatId) {
-        this.chatId = chatId;
-    }
-
-    public String getUsername() {
-        return username;
-    }
-
-    public void setUsername(String username) {
-        this.username = username;
-    }
-
-    public Date getRegDate() {
-        return regDate;
-    }
-
-    public void setRegDate(Date regDate) {
-        this.regDate = regDate;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    public int getAge() {
-        return age;
-    }
-
-    public void setAge(int age) {
-        this.age = age;
-    }
-
-    public String getCity() {
-        return city;
-    }
-
-    public void setCity(String city) {
-        this.city = city;
-    }
-
-    public UserPosition getPosition() {
-        return userPosition;
-    }
-
-    public void setPosition(UserPosition userPosition) {
-        this.userPosition = userPosition;
-    }
-
-    public String getTags() {
-        return tags;
-    }
-
-    public void setTags(String tags) {
-        this.tags = tags;
-    }
-
-    public Set<String> getQuizAnswers() {
-        return quizAnswers;
-    }
-
-    public void setQuizAnswers(Set<String> quizAnswers) {
-        this.quizAnswers = quizAnswers;
-    }
-
 }

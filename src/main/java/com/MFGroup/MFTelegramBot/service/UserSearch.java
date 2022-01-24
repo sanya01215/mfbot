@@ -7,13 +7,12 @@ import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Objects;
-import java.util.Set;
 
 @Service
 public class UserSearch {
     @Autowired
     private UserRepository userRepo;
-    public User findBestTagMatchUser(Set<String> matchTagSet, Long currentUserChatId){
+    public User findBestTagMatchUser(List<String> matchTagSet, Long currentUserChatId){
         User bestMatchUser=null;
         int bestMatchUserPoints=0;
         List<User> allUsers = userRepo.findAll();

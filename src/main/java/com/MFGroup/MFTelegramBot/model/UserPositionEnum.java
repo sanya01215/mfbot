@@ -1,6 +1,6 @@
 package com.MFGroup.MFTelegramBot.model;
 
-public enum UserPosition {
+public enum UserPositionEnum {
     INPUT_FULLNAME,
     INPUT_AGE,
     INPUT_CITY,
