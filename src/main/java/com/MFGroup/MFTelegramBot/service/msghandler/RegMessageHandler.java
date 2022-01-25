@@ -1,14 +1,15 @@
 package com.MFGroup.MFTelegramBot.service.msghandler;
 
-import com.MFGroup.MFTelegramBot.dao.impl.BotData;
-import com.MFGroup.MFTelegramBot.service.msgsender.MessageSender;
 import com.MFGroup.MFTelegramBot.dao.Cache;
 import com.MFGroup.MFTelegramBot.dao.UserRepository;
+import com.MFGroup.MFTelegramBot.dao.impl.BotData;
+import com.MFGroup.MFTelegramBot.decorator.SendMessageEditMessageDecorator;
+import com.MFGroup.MFTelegramBot.decorator.SendMessageWrapper;
 import com.MFGroup.MFTelegramBot.factory.KeyboardFactory;
 import com.MFGroup.MFTelegramBot.model.User;
-import com.MFGroup.MFTelegramBot.service.userlogic.UserSearch;
+import com.MFGroup.MFTelegramBot.service.msgsender.MessageSender;
+import com.MFGroup.MFTelegramBot.service.userhandler.UserSearch;
 import org.springframework.stereotype.Component;
-import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.objects.Message;
 @Component
 public class RegMessageHandler implements Handler<Message> {
@@ -20,7 +21,7 @@ public class RegMessageHandler implements Handler<Message> {
 
     public final UserSearch userSearch;
 
-    private final SendMessage sendMessage;
+    private final SendMessageEditMessageDecorator sendMessage;
 
     private final Cache<User> cache;
 
@@ -31,13 +32,13 @@ public class RegMessageHandler implements Handler<Message> {
         this.userRepo = userRepo;
         this.messageSender = messageSender;
         this.userSearch = userSearch;
-        this.sendMessage = new SendMessage();
+        this.sendMessage = new SendMessageWrapper();
         this.cache = cache;
     }
 
     @Override
-    public void choose(Message message) {
-        String chatId = message.getChatId().toString();
+    public void processReceivedObject(Message message) {
+        int chatId = Math.toIntExact(message.getChatId());
         sendMessage.setChatId(chatId);
         user = cache.findById(message.getChatId());
         switch (user.getPosition()) {

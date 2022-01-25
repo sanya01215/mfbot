@@ -13,10 +13,10 @@ public class BotClient extends TelegramLongPollingBot {
     private String userName;
     @Value("${bot.auth.token}")
     private String token;
-    private final BotClientProcessor botClientProcessor;
+    private final BotClientDataReceiver botClientDataReceiver;
 
-    public BotClient(BotClientProcessor botClientProcessor) {
-        this.botClientProcessor = botClientProcessor;
+    public BotClient(BotClientDataReceiver botClientDataReceiver) {
+        this.botClientDataReceiver = botClientDataReceiver;
     }
 
     @Override
@@ -31,7 +31,7 @@ public class BotClient extends TelegramLongPollingBot {
 
     @Override
     public void onUpdateReceived(Update update) {
-        botClientProcessor.process(update);
+        botClientDataReceiver.process(update);
     }
 
     @Override
