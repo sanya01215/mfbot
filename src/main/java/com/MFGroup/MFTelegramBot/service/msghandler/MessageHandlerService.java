@@ -1,15 +1,16 @@
 package com.MFGroup.MFTelegramBot.service.msghandler;
 
 
-import com.MFGroup.MFTelegramBot.dao.impl.BotData;
-import com.MFGroup.MFTelegramBot.service.msgsender.MessageSender;
 import com.MFGroup.MFTelegramBot.dao.Cache;
 import com.MFGroup.MFTelegramBot.dao.UserRepository;
+import com.MFGroup.MFTelegramBot.dao.impl.BotData;
+import com.MFGroup.MFTelegramBot.decorator.SendMessageEditMessageDecorator;
+import com.MFGroup.MFTelegramBot.decorator.SendMessageWrapper;
 import com.MFGroup.MFTelegramBot.factory.KeyboardFactory;
 import com.MFGroup.MFTelegramBot.model.User;
-import com.MFGroup.MFTelegramBot.service.userlogic.UserSearch;
+import com.MFGroup.MFTelegramBot.service.msgsender.MessageSender;
+import com.MFGroup.MFTelegramBot.service.userhandler.UserSearch;
 import org.springframework.stereotype.Component;
-import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.objects.Chat;
 import org.telegram.telegrambots.meta.api.objects.Message;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.ReplyKeyboard;
@@ -28,7 +29,7 @@ public class MessageHandlerService implements Handler<Message> {
 
     public final UserSearch userSearch;
 
-    private SendMessage messageToSend;
+    private SendMessageEditMessageDecorator messageToSend;
 
     private final Cache<User> cache;
 
@@ -39,15 +40,15 @@ public class MessageHandlerService implements Handler<Message> {
         this.userRepo = userRepo;
         this.messageSender = messageSender;
         this.userSearch = userSearch;
-        this.messageToSend = new SendMessage();
+        this.messageToSend = new SendMessageWrapper();
         this.cache = cache;
         this.regMessageHandler = regMessageHandler;
     }
 
     @Override
-    public void choose(Message message) {
+    public void processReceivedObject(Message message) {
         String receivedMsg = message.getText().trim();
-        String chatId = message.getChatId().toString();
+        String chatId = String.valueOf(message.getChatId());
 
         User user = cache.findById(message.getChatId());
 
@@ -56,7 +57,7 @@ public class MessageHandlerService implements Handler<Message> {
             switch (receivedMsg) {
                 case "/start":
                     prepareMessageAndSend(messageSender,chatId,START_HELLO, keyBoard.removeReplyKeyBoard());
-                    messageSender.sendMessage(messageToSend);
+                    messageSender.sendMessage((SendMessageWrapper) messageToSend);
                     prepareMessageAndSend(messageSender,chatId,WAIT_CHOOSE,keyBoard.getContinueCancelReplyKeyBoard());
                     break;
 
@@ -68,7 +69,7 @@ public class MessageHandlerService implements Handler<Message> {
                 default:
                     messageToSend.setText(PROBLEM);
             }
-            messageSender.sendMessage(messageToSend);
+            messageSender.sendMessage((SendMessageWrapper) messageToSend);
         }
 
     }
@@ -85,11 +86,10 @@ public class MessageHandlerService implements Handler<Message> {
     }
 
     private void prepareMessageAndSend(MessageSender messageSender, String chatId, String text, ReplyKeyboard replyKeyboard) {
-        SendMessage messageToSend = SendMessage.builder()
-                .chatId(chatId)
-                .text(text)
-                .replyMarkup(replyKeyboard)
-                .build();
+        SendMessageWrapper messageToSend = new SendMessageWrapper();
+        messageToSend.setChatId(chatId);
+        messageToSend.setText(text);
+        messageToSend.setReplyMarkup(replyKeyboard);
         messageSender.sendMessage(messageToSend);
     }
 }

@@ -1,10 +1,9 @@
 package com.MFGroup.MFTelegramBot.service.msgsender;
 
-import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
-import org.telegram.telegrambots.meta.api.methods.updatingmessages.EditMessageText;
-import org.telegram.telegrambots.meta.api.objects.Message;
+import com.MFGroup.MFTelegramBot.decorator.SendMessageEditMessageDecorator;
+import org.telegram.telegrambots.meta.api.objects.replykeyboard.InlineKeyboardMarkup;
 
 public interface MessageSender {
-    Message sendMessage(SendMessage sendMessage);
-    void sendEditMessage(EditMessageText editMessageText);
+    void prepareAndSendMsgOrEditMsg(SendMessageEditMessageDecorator msg, int msgId, String msgText, InlineKeyboardMarkup msgKeyBoard);
+    void sendMessage(SendMessageEditMessageDecorator msg);
 }

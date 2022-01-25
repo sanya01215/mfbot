@@ -12,7 +12,7 @@ import org.telegram.telegrambots.meta.api.objects.Message;
 import org.telegram.telegrambots.meta.api.objects.Update;
 
 @Component
-public class BotClientProcessorImpl implements BotClientProcessor {
+public class BotClientDataReceiverImpl implements BotClientDataReceiver {
     @Autowired
     private CallbackQueryHandlerService callbackQueryHandlerService;
     @Autowired
@@ -24,18 +24,18 @@ public class BotClientProcessorImpl implements BotClientProcessor {
 
     private User user;
 
-    public BotClientProcessorImpl() {
+    public BotClientDataReceiverImpl() {
     }
 
     @Override
     public void executeMessage(Message message) {
-        if(cache.findById(message.getChatId()) != null)regMessageHandler.choose(message);
-        else messageHandlerService.choose(message);
+        if(cache.findById(message.getChatId()) != null)regMessageHandler.processReceivedObject(message);
+        else messageHandlerService.processReceivedObject(message);
     }
 
     @Override
     public void executeCallBackQuery(CallbackQuery callbackQuery) {
-        callbackQueryHandlerService.choose(callbackQuery);
+        callbackQueryHandlerService.processReceivedObject(callbackQuery);
     }
 
     @Override

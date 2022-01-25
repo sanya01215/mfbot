@@ -1,6 +1,7 @@
 package com.MFGroup.MFTelegramBot.model;
 
 import com.MFGroup.MFTelegramBot.dao.impl.BotData;
+import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 
@@ -8,6 +9,7 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 @Data
+@AllArgsConstructor
 @Builder
 public class User {
     private Long chatId;
