@@ -1,43 +1,44 @@
-package com.MFGroup.MFTelegramBot.service.msghandler;
+package com.MFGroup.MFTelegramBot.service.msghandler.impl;
 
 import com.MFGroup.MFTelegramBot.dao.Cache;
 import com.MFGroup.MFTelegramBot.dao.UserRepository;
-import com.MFGroup.MFTelegramBot.dao.impl.BotData;
-import com.MFGroup.MFTelegramBot.decorator.SendMessageEditMessageDecorator;
-import com.MFGroup.MFTelegramBot.decorator.SendMessageWrapper;
+import com.MFGroup.MFTelegramBot.dao.BotData;
+import com.MFGroup.MFTelegramBot.decorator.SendMsgEditMsgDecorator;
+import com.MFGroup.MFTelegramBot.decorator.impl.SendMsgWrapper;
 import com.MFGroup.MFTelegramBot.factory.KeyboardFactory;
 import com.MFGroup.MFTelegramBot.model.User;
-import com.MFGroup.MFTelegramBot.service.msgsender.MessageSender;
+import com.MFGroup.MFTelegramBot.service.msghandler.Handler;
+import com.MFGroup.MFTelegramBot.service.msgsender.MsgSender;
 import com.MFGroup.MFTelegramBot.service.userhandler.UserSearch;
 import org.springframework.stereotype.Component;
 import org.telegram.telegrambots.meta.api.objects.Message;
 @Component
-public class RegMessageHandler implements Handler<Message> {
+public class RegMsgHandler implements Handler<Message> {
     private final KeyboardFactory keyBoard;
 
     private final UserRepository userRepo;
 
-    public final MessageSender messageSender;
+    public final MsgSender msgSender;
 
     public final UserSearch userSearch;
 
-    private final SendMessageEditMessageDecorator sendMessage;
+    private final SendMsgEditMsgDecorator sendMessage;
 
     private final Cache<User> cache;
 
     private User user;
 
-    public RegMessageHandler(KeyboardFactory keyBoard, UserRepository userRepo, MessageSender messageSender, UserSearch userSearch, Cache<User> cache) {
+    public RegMsgHandler(KeyboardFactory keyBoard, UserRepository userRepo, MsgSender msgSender, UserSearch userSearch, Cache<User> cache) {
         this.keyBoard = keyBoard;
         this.userRepo = userRepo;
-        this.messageSender = messageSender;
+        this.msgSender = msgSender;
         this.userSearch = userSearch;
-        this.sendMessage = new SendMessageWrapper();
+        this.sendMessage = new SendMsgWrapper();
         this.cache = cache;
     }
 
     @Override
-    public void processReceivedObject(Message message) {
+    public void processReceivedObj(Message message) {
         int chatId = Math.toIntExact(message.getChatId());
         sendMessage.setChatId(chatId);
         user = cache.findById(message.getChatId());
@@ -61,7 +62,7 @@ public class RegMessageHandler implements Handler<Message> {
                 sendMessage.setText("Invalid state. Reg Message class error, method choose");
                 break;
         }
-        messageSender.sendMessage(sendMessage);
+        msgSender.sendMessage(sendMessage);
     }
 
     private String endRegistration(Message message) {

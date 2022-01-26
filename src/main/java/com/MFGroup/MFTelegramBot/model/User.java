@@ -1,6 +1,6 @@
 package com.MFGroup.MFTelegramBot.model;
 
-import com.MFGroup.MFTelegramBot.dao.impl.BotData;
+import com.MFGroup.MFTelegramBot.dao.BotData;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;

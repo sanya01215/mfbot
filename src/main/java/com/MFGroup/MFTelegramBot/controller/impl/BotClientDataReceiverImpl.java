@@ -1,10 +1,11 @@
-package com.MFGroup.MFTelegramBot.controller;
+package com.MFGroup.MFTelegramBot.controller.impl;
 
+import com.MFGroup.MFTelegramBot.controller.BotClientDataReceiver;
 import com.MFGroup.MFTelegramBot.dao.impl.CacheImpl;
 import com.MFGroup.MFTelegramBot.model.User;
-import com.MFGroup.MFTelegramBot.service.msghandler.CallbackQueryHandlerService;
-import com.MFGroup.MFTelegramBot.service.msghandler.MessageHandlerService;
-import com.MFGroup.MFTelegramBot.service.msghandler.RegMessageHandler;
+import com.MFGroup.MFTelegramBot.service.msghandler.impl.CallbackQueryHandlerService;
+import com.MFGroup.MFTelegramBot.service.msghandler.impl.MsgHandlerService;
+import com.MFGroup.MFTelegramBot.service.msghandler.impl.RegMsgHandler;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.telegram.telegrambots.meta.api.objects.CallbackQuery;
@@ -16,9 +17,9 @@ public class BotClientDataReceiverImpl implements BotClientDataReceiver {
     @Autowired
     private CallbackQueryHandlerService callbackQueryHandlerService;
     @Autowired
-    private MessageHandlerService messageHandlerService;
+    private MsgHandlerService msgHandlerService;
     @Autowired
-    private RegMessageHandler regMessageHandler;
+    private RegMsgHandler regMsgHandler;
     @Autowired
     private CacheImpl cache;
 
@@ -29,13 +30,13 @@ public class BotClientDataReceiverImpl implements BotClientDataReceiver {
 
     @Override
     public void executeMessage(Message message) {
-        if(cache.findById(message.getChatId()) != null)regMessageHandler.processReceivedObject(message);
-        else messageHandlerService.processReceivedObject(message);
+        if(cache.findById(message.getChatId()) != null) regMsgHandler.processReceivedObj(message);
+        else msgHandlerService.processReceivedObj(message);
     }
 
     @Override
     public void executeCallBackQuery(CallbackQuery callbackQuery) {
-        callbackQueryHandlerService.processReceivedObject(callbackQuery);
+        callbackQueryHandlerService.processReceivedObj(callbackQuery);
     }
 
     @Override
