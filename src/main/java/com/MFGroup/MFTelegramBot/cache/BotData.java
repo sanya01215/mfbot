@@ -1,4 +1,4 @@
-package com.MFGroup.MFTelegramBot.dao;
+package com.MFGroup.MFTelegramBot.cache;
 
 import java.util.List;
 
@@ -24,11 +24,13 @@ public class BotData {
         public static final String TAGS_DELIMITER=" || ";
     }
     public enum UserPositionEnum {
+        START,
+        ACCEPT,
         INPUT_FULLNAME,
         INPUT_AGE,
         INPUT_CITY,
         INPUT_QUIZ,
         NONE,
-        END_REGISTRATION
+        FINISHED_REGISTRATION
     }
 }

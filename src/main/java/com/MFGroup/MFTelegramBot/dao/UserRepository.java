@@ -1,8 +1,9 @@
 package com.MFGroup.MFTelegramBot.dao;
 
 import com.MFGroup.MFTelegramBot.model.User;
-import org.springframework.data.mongodb.repository.MongoRepository;
+import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.stereotype.Repository;
 
-public interface UserRepository extends MongoRepository<User,String> {
-    public User findByUsername(String username);
+@Repository
+public interface UserRepository extends JpaRepository<User,Long> {
 }
