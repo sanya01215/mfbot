@@ -7,7 +7,7 @@ import org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.*;
 import java.util.*;
 
 import static com.MFGroup.MFTelegramBot.factory.KeyboardNameEnum.*;
-import static com.MFGroup.MFTelegramBot.dao.impl.BotData.KeyboardFactoryButtonsText.*;
+import static com.MFGroup.MFTelegramBot.cache.BotData.KeyboardFactoryButtonsText.*;
 
 @Component
 public class KeyboardFactory {
@@ -16,15 +16,15 @@ public class KeyboardFactory {
         keyboardMap = new HashMap<>();
     }
 
-    public ReplyKeyboardMarkup getMainReplyKeyBoardMarkup() {
+    public ReplyKeyboardMarkup getMainKBMarkup() {
         return (ReplyKeyboardMarkup) getKeyBoardFromCacheOrMake(MAIN_REPLY_KEYBOARD, ReplyKeyboardMarkup.class, MAIN_REPLY_BUTTONS_TEXT, 1);
     }
 
-    public ReplyKeyboardMarkup getContinueCancelReplyKeyBoard() {
+    public ReplyKeyboardMarkup getOkCancelKB() {
         return (ReplyKeyboardMarkup) getKeyBoardFromCacheOrMake(CONTINUE_CANCEL_REPLY_KEYBOARD, ReplyKeyboardMarkup.class, CONTINUE_CANCEL_BUTTONS_TEXT, 1);
     }
 
-    public InlineKeyboardMarkup getOkRemoveAttachKeyBoard() {
+    public InlineKeyboardMarkup getOkRemoveAttachKB() {
         return (InlineKeyboardMarkup) getKeyBoardFromCacheOrMake(OK_REMOVE_INLINE_KEYBOARD, InlineKeyboardMarkup.class, OK_REMOVE_BUTTONS_TEXT, 1);
     }
 
