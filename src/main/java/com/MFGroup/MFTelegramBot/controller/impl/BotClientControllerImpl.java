@@ -3,12 +3,12 @@ package com.MFGroup.MFTelegramBot.controller.impl;
 import com.MFGroup.MFTelegramBot.controller.BotClientController;
 import com.MFGroup.MFTelegramBot.dao.UserRepository;
 import com.MFGroup.MFTelegramBot.decorator.SendMsgEditMsgDecorator;
-import com.MFGroup.MFTelegramBot.decorator.impl.EditMsgWrapper;
-import com.MFGroup.MFTelegramBot.decorator.impl.SendMsgWrapper;
+import com.MFGroup.MFTelegramBot.decorator.impl.EditMsgWrap;
+import com.MFGroup.MFTelegramBot.decorator.impl.SendMsgWrap;
 import com.MFGroup.MFTelegramBot.model.User;
 import com.MFGroup.MFTelegramBot.service.bot.BotClient;
 import com.MFGroup.MFTelegramBot.service.message.impl.CallbackQueryService;
-import com.MFGroup.MFTelegramBot.service.message.impl.RegMessageService;
+import com.MFGroup.MFTelegramBot.service.message.impl.MessageService;
 import lombok.SneakyThrows;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
@@ -24,7 +24,7 @@ public class BotClientControllerImpl implements BotClientController {
     @Autowired
     private CallbackQueryService callbackQueryService;
     @Autowired
-    private RegMessageService regMessageService;
+    private MessageService messageService;
     @Autowired
     @Lazy
     //fix circle dependency botClient-BotClientController
@@ -33,7 +33,7 @@ public class BotClientControllerImpl implements BotClientController {
     @Override
     public void receiveMsg(Message message) {
         SendMsgEditMsgDecorator replyMsgList = null;
-        replyMsgList = regMessageService.processReceivedObj(message);
+        replyMsgList = messageService.processReceivedObj(message);
         sendAnswer(replyMsgList);
     }
 
@@ -46,8 +46,8 @@ public class BotClientControllerImpl implements BotClientController {
     @SneakyThrows
     private void sendAnswer(SendMsgEditMsgDecorator replyMsgList) {
         Message sentMessage = null;
-        if (replyMsgList.getClass() == EditMsgWrapper.class) botClient.execute((EditMsgWrapper) replyMsgList);
-        if (replyMsgList.getClass() == SendMsgWrapper.class) sentMessage = botClient.execute((SendMsgWrapper) replyMsgList);
+        if (replyMsgList.getClass() == EditMsgWrap.class) botClient.execute((EditMsgWrap) replyMsgList);
+        if (replyMsgList.getClass() == SendMsgWrap.class) sentMessage = botClient.execute((SendMsgWrap) replyMsgList);
 
         if (sentMessage != null)saveLastMessageId(sentMessage.getMessageId(),sentMessage.getChatId());
     }

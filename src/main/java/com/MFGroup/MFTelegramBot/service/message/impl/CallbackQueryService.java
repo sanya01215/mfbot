@@ -2,8 +2,8 @@ package com.MFGroup.MFTelegramBot.service.message.impl;
 
 import com.MFGroup.MFTelegramBot.dao.UserRepository;
 import com.MFGroup.MFTelegramBot.decorator.SendMsgEditMsgDecorator;
-import com.MFGroup.MFTelegramBot.decorator.impl.EditMsgWrapper;
-import com.MFGroup.MFTelegramBot.decorator.impl.SendMsgWrapper;
+import com.MFGroup.MFTelegramBot.decorator.impl.EditMsgWrap;
+import com.MFGroup.MFTelegramBot.decorator.impl.SendMsgWrap;
 import com.MFGroup.MFTelegramBot.factory.KeyboardFactory;
 import com.MFGroup.MFTelegramBot.model.User;
 import com.MFGroup.MFTelegramBot.service.message.Handler;
@@ -20,14 +20,15 @@ import static com.MFGroup.MFTelegramBot.cache.BotData.CallbackQueryHandlerSpeech
 
 @Component
 public class CallbackQueryService implements Handler<CallbackQuery> {
-    private final KeyboardFactory keyboardFactory;
+    private final KeyboardFactory kbFactory;
     private final UserRepository userRepo;
-    private Long lastMessageId;
+    private Long lastMsgId;
     private Long chatId;
     private String chatIdStr;
     private final List<String> quizAnswers;
-    public CallbackQueryService(KeyboardFactory keyboardFactory, UserRepository userRepo) {
-        this.keyboardFactory = keyboardFactory;
+
+    public CallbackQueryService(KeyboardFactory kbFactory, UserRepository userRepo) {
+        this.kbFactory = kbFactory;
         this.userRepo = userRepo;
         quizAnswers = new ArrayList<>();
     }
@@ -38,42 +39,48 @@ public class CallbackQueryService implements Handler<CallbackQuery> {
         chatId = callbackQuery.getMessage().getChatId();
         chatIdStr = String.valueOf(chatId);
         String cbqData = callbackQuery.getData();
-        User user  = userRepo.getById(chatId);
-        lastMessageId = user.getLastMsgId();
+        User user = userRepo.getById(chatId);
+        lastMsgId = user.getLastMsgId();
         SendMsgEditMsgDecorator replyMsg;
 
-        switch (cbqData){
+        switch (cbqData) {
             case "OK":
-                replyMsg =new SendMsgWrapper(chatIdStr, ALL_DONE, keyboardFactory.getMainKBMarkup());
-                userEndRegistration(user,quizAnswers);
+                userEndRegistration(user, quizAnswers);
+                replyMsg = new SendMsgWrap(chatIdStr,ALL_DONE, kbFactory.getMainKBMarkup());
                 break;
             case "REMOVE":
-                quizAnswers.remove(quizAnswers.size() - 1);
-                replyMsg = new EditMsgWrapper(chatIdStr,YOUR_TAGS+ getChosenTags(quizAnswers), keyboardFactory.getOkRemoveAttachKB());
-                replyMsg.setMessageId(Math.toIntExact(lastMessageId));
+                removeLastTagFromAnswers();
+                replyMsg = new EditMsgWrap(chatIdStr,YOUR_TAGS + getChosenTags(quizAnswers), kbFactory.getOkRmAttachKB());
+                replyMsg.setMessageId(Math.toIntExact(lastMsgId));
                 break;
             default:
-                replyMsg = putQuizAnswer(cbqData,quizAnswers);
+                replyMsg = putQuizAnswer(cbqData, quizAnswers);
         }
         return replyMsg;
     }
 
-    private SendMsgEditMsgDecorator putQuizAnswer(String cbqData,List<String> answers) {
-        if (!answers.isEmpty()) return putAnswerIfListNotEmpty(cbqData,answers);
-        else return putAnswerIfListEmpty(cbqData, answers);
-    }
-    private SendMsgEditMsgDecorator putAnswerIfListNotEmpty(String cbqData, List<String> answers){
-        if (cbqData != null && !answers.contains(cbqData)) answers.add(cbqData);
-        EditMsgWrapper eMsgWrap = new EditMsgWrapper (chatIdStr,YOUR_TAGS+ getChosenTags(answers), keyboardFactory.getOkRemoveAttachKB());
-        eMsgWrap.setMessageId(Math.toIntExact(lastMessageId));
-        return eMsgWrap;
-    }
-    private SendMsgEditMsgDecorator putAnswerIfListEmpty(String cbqData, List<String> answers){
-        if (cbqData != null) answers.add(cbqData);
-        return new SendMsgWrapper(chatIdStr,YOUR_TAGS+ getChosenTags(answers), keyboardFactory.getOkRemoveAttachKB());
+    private void removeLastTagFromAnswers() {
+        quizAnswers.remove(quizAnswers.size() - 1);
     }
 
-    private void userEndRegistration(User regUser,List<String> answers ) {
+    private SendMsgEditMsgDecorator putQuizAnswer(String cbqData, List<String> answers) {
+        if (!answers.isEmpty()) return putAnswerIfListNotEmpty(cbqData, answers);
+        else return putAnswerIfListEmpty(cbqData, answers);
+    }
+
+    private SendMsgEditMsgDecorator putAnswerIfListNotEmpty(String cbqData, List<String> answers) {
+        if (cbqData != null && !answers.contains(cbqData)) answers.add(cbqData);
+        EditMsgWrap eMsgWrap = new EditMsgWrap(chatIdStr, YOUR_TAGS + getChosenTags(answers), kbFactory.getOkRmAttachKB());
+        eMsgWrap.setMessageId(Math.toIntExact(lastMsgId));
+        return eMsgWrap;
+    }
+
+    private SendMsgEditMsgDecorator putAnswerIfListEmpty(String cbqData, List<String> answers) {
+        if (cbqData != null) answers.add(cbqData);
+        return new SendMsgWrap(chatIdStr, YOUR_TAGS + getChosenTags(answers), kbFactory.getOkRmAttachKB());
+    }
+
+    private void userEndRegistration(User regUser, List<String> answers) {
         regUser.setPosition(FINISHED_REGISTRATION);
         regUser.setQuizAnswers(answers);
         userRepo.saveAndFlush(regUser);

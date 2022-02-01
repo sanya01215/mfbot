@@ -7,12 +7,12 @@ import org.telegram.telegrambots.meta.api.objects.replykeyboard.InlineKeyboardMa
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.ReplyKeyboard;
 
 @NoArgsConstructor
-public class EditMsgWrapper extends EditMessageText implements SendMsgEditMsgDecorator {
+public class EditMsgWrap extends EditMessageText implements SendMsgEditMsgDecorator {
     @Override
     public void setChatId(int id) {
         super.setMessageId(id);
     }
-    public EditMsgWrapper(String chatId, String text, ReplyKeyboard replyMarkup) {
+    public EditMsgWrap(String chatId, String text, ReplyKeyboard replyMarkup) {
         super();
         this.setChatId(chatId);
         this.setText(text);

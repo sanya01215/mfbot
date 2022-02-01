@@ -24,7 +24,7 @@ public class KeyboardFactory {
         return (ReplyKeyboardMarkup) getKeyBoardFromCacheOrMake(CONTINUE_CANCEL_REPLY_KEYBOARD, ReplyKeyboardMarkup.class, CONTINUE_CANCEL_BUTTONS_TEXT, 1);
     }
 
-    public InlineKeyboardMarkup getOkRemoveAttachKB() {
+    public InlineKeyboardMarkup getOkRmAttachKB() {
         return (InlineKeyboardMarkup) getKeyBoardFromCacheOrMake(OK_REMOVE_INLINE_KEYBOARD, InlineKeyboardMarkup.class, OK_REMOVE_BUTTONS_TEXT, 1);
     }
 
