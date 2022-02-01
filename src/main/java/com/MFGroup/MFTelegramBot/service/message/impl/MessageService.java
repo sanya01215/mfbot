@@ -2,7 +2,7 @@ package com.MFGroup.MFTelegramBot.service.message.impl;
 
 import com.MFGroup.MFTelegramBot.dao.UserRepository;
 import com.MFGroup.MFTelegramBot.decorator.SendMsgEditMsgDecorator;
-import com.MFGroup.MFTelegramBot.decorator.impl.SendMsgWrapper;
+import com.MFGroup.MFTelegramBot.decorator.impl.SendMsgWrap;
 import com.MFGroup.MFTelegramBot.factory.KeyboardFactory;
 import com.MFGroup.MFTelegramBot.model.User;
 import com.MFGroup.MFTelegramBot.service.message.Handler;
@@ -15,7 +15,7 @@ import static com.MFGroup.MFTelegramBot.cache.BotData.MessageHandlerSpeech.*;
 import static com.MFGroup.MFTelegramBot.cache.BotData.UserPositionEnum.*;
 
 @Component
-public class RegMessageService implements Handler<Message> {
+public class MessageService implements Handler<Message> {
     private final KeyboardFactory keyBoard;
 
     private final UserRepository userRepo;
@@ -27,11 +27,11 @@ public class RegMessageService implements Handler<Message> {
 
     private User user;
 
-    public RegMessageService(KeyboardFactory keyBoard, UserRepository userRepo, UserSearch userSearch) {
+    public MessageService(KeyboardFactory keyBoard, UserRepository userRepo, UserSearch userSearch) {
         this.keyBoard = keyBoard;
         this.userRepo = userRepo;
         this.userSearch = userSearch;
-        this.sendMessage = new SendMsgWrapper();
+        this.sendMessage = new SendMsgWrap();
     }
 
     @Override
@@ -45,7 +45,7 @@ public class RegMessageService implements Handler<Message> {
         //get user fromDB or make new start user
         user = userRepo.findById(message.getChatId()).orElseGet(()->new User(chatIdLong,START));
         //set replyMsg
-        SendMsgEditMsgDecorator replyMsg = new SendMsgWrapper();
+        SendMsgEditMsgDecorator replyMsg = new SendMsgWrap();
         replyMsg.setChatId(chatId);
 
         switch (user.getPosition()) {
@@ -88,7 +88,7 @@ public class RegMessageService implements Handler<Message> {
     }
 
     private  SendMsgEditMsgDecorator prepareMsg(String chatId, String text, ReplyKeyboard replyKeyboard){
-        return new SendMsgWrapper(chatId,text,replyKeyboard);
+        return new SendMsgWrap(chatId,text,replyKeyboard);
     }
     private String finishedRegistrationMenu(Message message) {
         String msg = message.getText();
