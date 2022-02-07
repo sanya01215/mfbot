@@ -1,4 +1,4 @@
-package com.MFGroup.MFTelegramBot.dao.impl;
+package com.MFGroup.MFTelegramBot.cache;
 
 import java.util.List;
 
@@ -18,12 +18,19 @@ public class BotData {
         public static final String PROBLEM="Problem in massage handler parsing messages";
 
     }
+    public static class CallbackQueryHandlerSpeech{
+        public static final String ALL_DONE="All done. Congratulations!!!";
+        public static final String YOUR_TAGS="Your tags:";
+        public static final String TAGS_DELIMITER=" || ";
+    }
     public enum UserPositionEnum {
+        START,
+        ACCEPT,
         INPUT_FULLNAME,
         INPUT_AGE,
         INPUT_CITY,
         INPUT_QUIZ,
         NONE,
-        END_REGISTRATION
+        FINISHED_REGISTRATION
     }
 }

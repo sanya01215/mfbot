@@ -1,5 +1,6 @@
-package com.MFGroup.MFTelegramBot.controller;
+package com.MFGroup.MFTelegramBot.service.bot;
 
+import com.MFGroup.MFTelegramBot.controller.impl.BotClientControllerImpl;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 import org.telegram.telegrambots.bots.TelegramLongPollingBot;
@@ -13,10 +14,10 @@ public class BotClient extends TelegramLongPollingBot {
     private String userName;
     @Value("${bot.auth.token}")
     private String token;
-    private final BotClientProcessor botClientProcessor;
+    private final BotClientControllerImpl botClientControllerImpl;
 
-    public BotClient(BotClientProcessor botClientProcessor) {
-        this.botClientProcessor = botClientProcessor;
+    public BotClient(BotClientControllerImpl botClientControllerImpl) {
+        this.botClientControllerImpl = botClientControllerImpl;
     }
 
     @Override
@@ -31,7 +32,7 @@ public class BotClient extends TelegramLongPollingBot {
 
     @Override
     public void onUpdateReceived(Update update) {
-        botClientProcessor.process(update);
+        botClientControllerImpl.process(update);
     }
 
     @Override
