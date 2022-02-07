@@ -24,7 +24,6 @@ public class MessageService implements Handler<Message> {
 
     private final SendMsgEditMsgDecorator sendMessage;
 
-
     private User user;
 
     public MessageService(KeyboardFactory keyBoard, UserRepository userRepo, UserSearch userSearch) {

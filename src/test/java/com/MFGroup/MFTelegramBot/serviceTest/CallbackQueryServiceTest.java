@@ -68,7 +68,7 @@ public class CallbackQueryServiceTest {
 //perform remove 1 tag
         receivedCbQuery.setData(testRemove);
         callbackQueryService.processReceivedObj(receivedCbQuery);
-//check if tags -1 present
+//check if tags -1 performed
         assertThat(sentTestMsg.getText()).isEqualTo(expectMsg + testLaw + delimiter + testTravel);
     }
 }
