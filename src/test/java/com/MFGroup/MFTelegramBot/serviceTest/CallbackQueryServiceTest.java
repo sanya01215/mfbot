@@ -4,7 +4,7 @@ import com.MFGroup.MFTelegramBot.cache.BotData;
 import com.MFGroup.MFTelegramBot.dao.UserRepository;
 import com.MFGroup.MFTelegramBot.decorator.SendMsgEditMsgDecorator;
 import com.MFGroup.MFTelegramBot.decorator.impl.EditMsgWrap;
-import com.MFGroup.MFTelegramBot.factory.KeyboardFactory;
+import com.MFGroup.MFTelegramBot.factory.keyboard.KeyboardFactory;
 import com.MFGroup.MFTelegramBot.model.User;
 import com.MFGroup.MFTelegramBot.service.message.impl.CallbackQueryService;
 import org.junit.jupiter.api.Test;

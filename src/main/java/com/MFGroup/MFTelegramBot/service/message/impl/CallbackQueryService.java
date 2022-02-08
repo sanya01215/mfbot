@@ -4,7 +4,7 @@ import com.MFGroup.MFTelegramBot.dao.UserRepository;
 import com.MFGroup.MFTelegramBot.decorator.SendMsgEditMsgDecorator;
 import com.MFGroup.MFTelegramBot.decorator.impl.EditMsgWrap;
 import com.MFGroup.MFTelegramBot.decorator.impl.SendMsgWrap;
-import com.MFGroup.MFTelegramBot.factory.KeyboardFactory;
+import com.MFGroup.MFTelegramBot.factory.keyboard.KeyboardFactory;
 import com.MFGroup.MFTelegramBot.model.User;
 import com.MFGroup.MFTelegramBot.service.message.Handler;
 import org.springframework.stereotype.Component;
@@ -81,7 +81,7 @@ public class CallbackQueryService implements Handler<CallbackQuery> {
     }
 
     private void userEndRegistration(User regUser, List<String> answers) {
-        regUser.setPosition(FINISHED_REGISTRATION);
+        regUser.setPosition(DONE_REGISTRATION);
         regUser.setQuizAnswers(answers);
         userRepo.saveAndFlush(regUser);
     }
