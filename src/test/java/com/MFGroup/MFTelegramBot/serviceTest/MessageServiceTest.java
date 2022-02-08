@@ -3,7 +3,7 @@ package com.MFGroup.MFTelegramBot.serviceTest;
 import com.MFGroup.MFTelegramBot.dao.UserRepository;
 import com.MFGroup.MFTelegramBot.decorator.SendMsgEditMsgDecorator;
 import com.MFGroup.MFTelegramBot.decorator.impl.SendMsgWrap;
-import com.MFGroup.MFTelegramBot.factory.KeyboardFactory;
+import com.MFGroup.MFTelegramBot.factory.keyboard.KeyboardFactory;
 import com.MFGroup.MFTelegramBot.service.message.impl.MessageService;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;

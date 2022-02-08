@@ -12,10 +12,14 @@ public class BotData {
 
     public static class MessageHandlerSpeech{
        public static final String START_HELLO= "Hello! There is The Bot for meeting some new interesting people : \n" +
-                "Please answer for a few questions, that help us to find you suitable person. ";
-        public static final String WAIT_CHOOSE="Wait your choose...";
+                "Please answer for a few questions, that help us to find you suitable person. \n" +
+               "Wait your choose...";
         public static final String TYPE_NAME="Type your Full Name";
+        public static final String NOW_QUIZ = "Now quiz. Please, tap all buttons which topic you prefer to conversation\nand then tap <Ok> : ";
         public static final String PROBLEM="Problem in massage handler parsing messages";
+        public static final String INCORRECT="Incorrect.Please try again";
+        public static final String TYPE_CITY="Type your city";
+        public static final String TYPE_AGE="Type your age";
 
     }
     public static class CallbackQueryHandlerSpeech{
@@ -31,6 +35,6 @@ public class BotData {
         INPUT_CITY,
         INPUT_QUIZ,
         NONE,
-        FINISHED_REGISTRATION
+        DONE_REGISTRATION
     }
 }
