@@ -3,8 +3,8 @@ package com.mfgroup.tgbot.serviceTest.message;
 import com.mfgroup.tgbot.cache.BotData;
 import com.mfgroup.tgbot.dao.UserRepository;
 import com.mfgroup.tgbot.factory.message.MessageFactory;
-import com.mfgroup.tgbot.model.User;
-import com.mfgroup.tgbot.model.decorator.impl.SendMsgWrap;
+import com.mfgroup.tgbot.model.user.User;
+import com.mfgroup.tgbot.model.message.adapter.impl.SendMsgAdapter;
 import com.mfgroup.tgbot.service.receive.handler.message.BeforeRegMsgService;
 import com.mfgroup.tgbot.service.user.UserSearch;
 import org.junit.jupiter.api.Test;
@@ -35,11 +35,11 @@ public class BeforeRegMsgServiceTest {
         long expectChatId = 123L;
         String expectChatIdStr = "123";
         String expectText = START_HELLO;
-        
+
         //init send testMsg
-        SendMsgWrap sendMsgWrap = new SendMsgWrap();
-        sendMsgWrap.setText(expectText);
-        sendMsgWrap.setChatId(expectChatIdStr);
+        SendMsgAdapter sendMsgAdapter = new SendMsgAdapter();
+        sendMsgAdapter.setText(expectText);
+        sendMsgAdapter.setChatId(expectChatIdStr);
 
         //init receive message
         Message testMsg = new Message();
@@ -54,12 +54,11 @@ public class BeforeRegMsgServiceTest {
         user.setPosition(BotData.UserPositionEnum.START);
 
         //mock msgFactory
-        when(msgFactory.getStartMsg()).thenReturn(sendMsgWrap);
+        when(msgFactory.getStartMsg()).thenReturn(sendMsgAdapter);
 
         //perform receive test message
-        SendMsgWrap retrievedAnswer = (SendMsgWrap) beforeRegMsgService.handleReceivedObj(testMsg, user);
+        SendMsgAdapter retrievedAnswer = (SendMsgAdapter) beforeRegMsgService.handleReceivedObj(testMsg, user);
         assertThat(retrievedAnswer.getChatId()).isEqualTo(expectChatIdStr);
         assertThat(retrievedAnswer.getText()).isEqualTo(expectText);
     }
-
 }

@@ -1,11 +1,12 @@
-package com.mfgroup.tgbot.model.decorator;
+package com.mfgroup.tgbot.model.message.adapter;
 
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.ReplyKeyboard;
 
-public interface SendMsgEditMsgDecorator {
+public interface SendMsgEditMsgAdapter {
     void setText(String text);
     void setChatId(String id);
     void setReplyMarkup(ReplyKeyboard replyKeyboard);
-    public void setMessageId(Integer messageId);
+    void setMessageId(Integer messageId);
+    String  getText();
 
 }

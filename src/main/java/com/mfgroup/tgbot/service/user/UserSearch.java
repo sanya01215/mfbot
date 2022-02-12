@@ -1,7 +1,7 @@
 package com.mfgroup.tgbot.service.user;
 
 import com.mfgroup.tgbot.dao.UserRepository;
-import com.mfgroup.tgbot.model.User;
+import com.mfgroup.tgbot.model.user.User;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;

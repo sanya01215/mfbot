@@ -1,4 +1,4 @@
-package com.mfgroup.tgbot.model;
+package com.mfgroup.tgbot.model.user;
 
 import com.mfgroup.tgbot.cache.BotData;
 import lombok.AllArgsConstructor;
@@ -52,7 +52,9 @@ public class User {
     public User() {
         regDate = Calendar.getInstance().getTime();
     }
-
+    public void addQuizAnswer(String answer){
+        quizAnswers.add(answer);
+    }
     @Override
     public String toString() {
         if (tags == null && quizAnswers!=null) {

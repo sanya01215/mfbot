@@ -1,10 +1,10 @@
 package com.mfgroup.tgbot.service.send;
 
 import com.mfgroup.tgbot.dao.UserRepository;
-import com.mfgroup.tgbot.model.User;
-import com.mfgroup.tgbot.model.decorator.SendMsgEditMsgDecorator;
-import com.mfgroup.tgbot.model.decorator.impl.EditMsgWrap;
-import com.mfgroup.tgbot.model.decorator.impl.SendMsgWrap;
+import com.mfgroup.tgbot.model.user.User;
+import com.mfgroup.tgbot.model.message.adapter.SendMsgEditMsgAdapter;
+import com.mfgroup.tgbot.model.message.adapter.impl.EditMsgAdapter;
+import com.mfgroup.tgbot.model.message.adapter.impl.SendMsgAdapter;
 import com.mfgroup.tgbot.client.BotClient;
 import lombok.SneakyThrows;
 import org.springframework.stereotype.Service;
@@ -20,10 +20,10 @@ public class MessageSenderServ {
         this.botClient = botClient;
     }
     @SneakyThrows
-    public void sendAnswer(SendMsgEditMsgDecorator replyMsg) {
+    public void sendAnswer(SendMsgEditMsgAdapter replyMsg) {
         Message sentMessage = null;
-        if (replyMsg.getClass() == EditMsgWrap.class) botClient.execute((EditMsgWrap) replyMsg);
-        if (replyMsg.getClass() == SendMsgWrap.class) sentMessage = botClient.execute((SendMsgWrap) replyMsg);
+        if (replyMsg.getClass() == EditMsgAdapter.class) botClient.execute((EditMsgAdapter) replyMsg);
+        if (replyMsg.getClass() == SendMsgAdapter.class) sentMessage = botClient.execute((SendMsgAdapter) replyMsg);
 
 
         if (sentMessage != null) saveLastMessageId(sentMessage.getMessageId(), sentMessage.getChatId());

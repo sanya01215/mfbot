@@ -1,8 +1,8 @@
 package com.mfgroup.tgbot.service.receive.facade;
 
-import com.mfgroup.tgbot.model.decorator.SendMsgEditMsgDecorator;
-import com.mfgroup.tgbot.service.receive.main.CallbackQueryMainHandler;
-import com.mfgroup.tgbot.service.receive.main.MessageMainHandler;
+import com.mfgroup.tgbot.model.message.adapter.SendMsgEditMsgAdapter;
+import com.mfgroup.tgbot.service.receive.facade.additional.CallbackQueryHandlerFacade;
+import com.mfgroup.tgbot.service.receive.facade.additional.MessageHandlerFacade;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.telegram.telegrambots.meta.api.objects.CallbackQuery;
@@ -11,12 +11,12 @@ import org.telegram.telegrambots.meta.api.objects.Update;
 @Service
 public class UpdateHandleFacadeImpl implements UpdateHandleFacade {
     @Autowired
-    private  CallbackQueryMainHandler cbQueryMainH;
+    private CallbackQueryHandlerFacade cbQueryMainH;
     @Autowired
-    private MessageMainHandler msgMainH;
+    private MessageHandlerFacade msgMainH;
 
     @Override
-    public SendMsgEditMsgDecorator handleReceiveUpdate(Update update) {
+    public SendMsgEditMsgAdapter handleReceiveUpdate(Update update) {
         if (update.hasMessage()) {
             return receiveMsg(update.getMessage());
         } else if (update.hasCallbackQuery()) {
@@ -25,11 +25,11 @@ public class UpdateHandleFacadeImpl implements UpdateHandleFacade {
         return null;
     }
 
-    private SendMsgEditMsgDecorator receiveMsg(Message message) {
+    private SendMsgEditMsgAdapter receiveMsg(Message message) {
         return msgMainH.shareReceiveObjToNeededHandler(message);
     }
 
-    private SendMsgEditMsgDecorator receiveCBQuery(CallbackQuery callbackQuery) {
+    private SendMsgEditMsgAdapter receiveCBQuery(CallbackQuery callbackQuery) {
         return cbQueryMainH.shareReceiveObjToNeededHandler(callbackQuery);
     }
 }

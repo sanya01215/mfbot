@@ -2,10 +2,10 @@ package com.mfgroup.tgbot.service.receive.handler.cbquery;
 
 import com.mfgroup.tgbot.dao.UserRepository;
 import com.mfgroup.tgbot.factory.keyboard.KeyboardFactory;
-import com.mfgroup.tgbot.model.User;
-import com.mfgroup.tgbot.model.decorator.SendMsgEditMsgDecorator;
-import com.mfgroup.tgbot.model.decorator.impl.EditMsgWrap;
-import com.mfgroup.tgbot.model.decorator.impl.SendMsgWrap;
+import com.mfgroup.tgbot.model.message.adapter.SendMsgEditMsgAdapter;
+import com.mfgroup.tgbot.model.message.adapter.impl.EditMsgAdapter;
+import com.mfgroup.tgbot.model.message.adapter.impl.SendMsgAdapter;
+import com.mfgroup.tgbot.model.user.User;
 import com.mfgroup.tgbot.service.receive.handler.Handler;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -22,62 +22,61 @@ import static com.mfgroup.tgbot.cache.BotData.UserPositionEnum.DONE_REGISTRATION
 public class CallbackQueryService implements Handler<CallbackQuery> {
     private final KeyboardFactory kbFactory;
     private final UserRepository userRepo;
-    private Long lastMsgId;
-    private String chatIdStr;
-    private final List<String> quizAnswers;
 
     public CallbackQueryService(KeyboardFactory kbFactory, UserRepository userRepo) {
         this.kbFactory = kbFactory;
         this.userRepo = userRepo;
-        quizAnswers = new ArrayList<>();
     }
 
     @Override
     @Transactional
-    public SendMsgEditMsgDecorator handleReceivedObj(CallbackQuery callbackQuery, User user) {
+    public SendMsgEditMsgAdapter handleReceivedObj(CallbackQuery callbackQuery, User user) {
+        List<String> quizAnswers = user.getQuizAnswers();
+        if(quizAnswers == null)quizAnswers = new ArrayList<>();
         Long chatId = callbackQuery.getMessage().getChatId();
-        chatIdStr = String.valueOf(chatId);
+        String chatIdStr = String.valueOf(chatId);
         String cbqData = callbackQuery.getData();
-        lastMsgId = user.getLastMsgId();
-        SendMsgEditMsgDecorator replyMsg;
+        Long lastMsgId = user.getLastMsgId();
+        SendMsgEditMsgAdapter replyMsg;
 
         switch (cbqData) {
             case "OK":
                 userEndRegistration(user, quizAnswers);
-                replyMsg = new SendMsgWrap(chatIdStr,ALL_DONE, kbFactory.getMainKBMarkup());
+                replyMsg = new SendMsgAdapter(chatIdStr, ALL_DONE, kbFactory.getMainKBMarkup());
                 break;
             case "REMOVE":
-                removeLastTagFromAnswers();
-                replyMsg = new EditMsgWrap(chatIdStr,YOUR_TAGS + getChosenTags(quizAnswers), kbFactory.getOkRmAttachKB());
+                removeLastTagFromAnswers(quizAnswers);
+                replyMsg = new EditMsgAdapter(chatIdStr, YOUR_TAGS + getChosenTags(quizAnswers), kbFactory.getOkRmAttachKB());
                 replyMsg.setMessageId(Math.toIntExact(lastMsgId));
                 break;
             default:
-                replyMsg = putQuizAnswer(cbqData, quizAnswers);
+                replyMsg = putQuizAnswer(cbqData, quizAnswers, lastMsgId, chatIdStr);
         }
         replyMsg.setChatId(chatIdStr);
+        saveAnswersIntoRepo(userRepo,quizAnswers,user);
 
         return replyMsg;
     }
 
-    private void removeLastTagFromAnswers() {
+    private void removeLastTagFromAnswers(List<String> quizAnswers) {
         quizAnswers.remove(quizAnswers.size() - 1);
     }
 
-    private SendMsgEditMsgDecorator putQuizAnswer(String cbqData, List<String> answers) {
-        if (!answers.isEmpty()) return putAnswerIfListNotEmpty(cbqData, answers);
-        else return putAnswerIfListEmpty(cbqData, answers);
+    private SendMsgEditMsgAdapter putQuizAnswer(String cbqData, List<String> answers, Long lastMsgId, String chatIdStr) {
+        if (!answers.isEmpty()) return putAnswerIfListNotEmpty(cbqData, answers, lastMsgId, chatIdStr);
+        else return putAnswerIfListEmpty(cbqData, answers, chatIdStr);
     }
 
-    private SendMsgEditMsgDecorator putAnswerIfListNotEmpty(String cbqData, List<String> answers) {
+    private SendMsgEditMsgAdapter putAnswerIfListNotEmpty(String cbqData, List<String> answers, Long lastMsgId, String chatIdStr) {
         if (cbqData != null && !answers.contains(cbqData)) answers.add(cbqData);
-        EditMsgWrap eMsgWrap = new EditMsgWrap(chatIdStr, YOUR_TAGS + getChosenTags(answers), kbFactory.getOkRmAttachKB());
+        EditMsgAdapter eMsgWrap = new EditMsgAdapter(chatIdStr, YOUR_TAGS + getChosenTags(answers), kbFactory.getOkRmAttachKB());
         eMsgWrap.setMessageId(Math.toIntExact(lastMsgId));
         return eMsgWrap;
     }
 
-    private SendMsgEditMsgDecorator putAnswerIfListEmpty(String cbqData, List<String> answers) {
+    private SendMsgEditMsgAdapter putAnswerIfListEmpty(String cbqData, List<String> answers, String chatIdStr) {
         if (cbqData != null) answers.add(cbqData);
-        return new SendMsgWrap(chatIdStr, YOUR_TAGS + getChosenTags(answers), kbFactory.getOkRmAttachKB());
+        return new SendMsgAdapter(chatIdStr, YOUR_TAGS + getChosenTags(answers), kbFactory.getOkRmAttachKB());
     }
 
     private void userEndRegistration(User regUser, List<String> answers) {
@@ -88,5 +87,10 @@ public class CallbackQueryService implements Handler<CallbackQuery> {
 
     private String getChosenTags(List<String> answers) {
         return "\n" + String.join(TAGS_DELIMITER, answers);
+    }
+
+    private void saveAnswersIntoRepo(UserRepository userRepo,List<String> answers ,User user){
+        user.setQuizAnswers(answers);
+        userRepo.save(user);
     }
 }

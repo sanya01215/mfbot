@@ -2,9 +2,9 @@ package com.mfgroup.tgbot.service.receive.handler.message;
 
 import com.mfgroup.tgbot.dao.UserRepository;
 import com.mfgroup.tgbot.factory.message.MessageFactory;
-import com.mfgroup.tgbot.model.User;
-import com.mfgroup.tgbot.model.decorator.SendMsgEditMsgDecorator;
-import com.mfgroup.tgbot.model.decorator.impl.SendMsgWrap;
+import com.mfgroup.tgbot.model.user.User;
+import com.mfgroup.tgbot.model.message.adapter.SendMsgEditMsgAdapter;
+import com.mfgroup.tgbot.model.message.adapter.impl.SendMsgAdapter;
 import com.mfgroup.tgbot.service.receive.handler.Handler;
 import com.mfgroup.tgbot.service.user.UserSearch;
 import org.springframework.stereotype.Service;
@@ -29,15 +29,15 @@ public class BeforeRegMsgService implements Handler<Message> {
     }
 
     @Override
-    public SendMsgEditMsgDecorator handleReceivedObj(Message msg, User user) {
-        SendMsgEditMsgDecorator replyMsg = getRegistrationAnswers(msg,user);
+    public SendMsgEditMsgAdapter handleReceivedObj(Message msg, User user) {
+        SendMsgEditMsgAdapter replyMsg = getRegistrationAnswers(msg,user);
         replyMsg.setChatId(String.valueOf(msg.getChatId()));
         userRepo.save(user);
         return replyMsg;
     }
 
-    private SendMsgWrap getRegistrationAnswers(Message message, User user){
-        SendMsgWrap replyMsg = null;
+    private SendMsgAdapter getRegistrationAnswers(Message message, User user){
+        SendMsgAdapter replyMsg = null;
         switch (user.getPosition()) {
             case START:
                 replyMsg = msgFactory.getStartMsg();

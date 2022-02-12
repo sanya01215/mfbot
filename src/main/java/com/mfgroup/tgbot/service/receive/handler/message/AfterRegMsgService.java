@@ -2,8 +2,8 @@ package com.mfgroup.tgbot.service.receive.handler.message;
 
 import com.mfgroup.tgbot.dao.UserRepository;
 import com.mfgroup.tgbot.factory.message.MessageFactory;
-import com.mfgroup.tgbot.model.User;
-import com.mfgroup.tgbot.model.decorator.SendMsgEditMsgDecorator;
+import com.mfgroup.tgbot.model.user.User;
+import com.mfgroup.tgbot.model.message.adapter.SendMsgEditMsgAdapter;
 import com.mfgroup.tgbot.service.receive.handler.Handler;
 import com.mfgroup.tgbot.service.user.UserSearch;
 import org.springframework.stereotype.Service;
@@ -24,9 +24,9 @@ public class AfterRegMsgService implements Handler<Message> {
     }
 
     @Override
-    public SendMsgEditMsgDecorator handleReceivedObj(Message message, User user) {
+    public SendMsgEditMsgAdapter handleReceivedObj(Message message, User user) {
         String chatIdStr = String.valueOf(message.getChatId());
-        SendMsgEditMsgDecorator sendMsg = msgFactory.getDoneRegMsg(getFinishedRegistrationAnswers(message,user));
+        SendMsgEditMsgAdapter sendMsg = msgFactory.getDoneRegMsg(getFinishedRegistrationAnswers(message,user));
         sendMsg.setChatId(chatIdStr);
         return sendMsg;
     }

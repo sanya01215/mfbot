@@ -1,18 +1,19 @@
-package com.mfgroup.tgbot.model.decorator.impl;
+package com.mfgroup.tgbot.model.message.adapter.impl;
 
-import com.mfgroup.tgbot.model.decorator.SendMsgEditMsgDecorator;
+import com.mfgroup.tgbot.model.message.adapter.SendMsgEditMsgAdapter;
 import lombok.NoArgsConstructor;
+import lombok.NonNull;
 import org.telegram.telegrambots.meta.api.methods.updatingmessages.EditMessageText;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.InlineKeyboardMarkup;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.ReplyKeyboard;
 
 @NoArgsConstructor
-public class EditMsgWrap extends EditMessageText implements SendMsgEditMsgDecorator {
+public class EditMsgAdapter extends EditMessageText implements SendMsgEditMsgAdapter {
     @Override
     public void setChatId(String id) {
         super.setChatId(id);
     }
-    public EditMsgWrap(String chatId, String text, ReplyKeyboard replyMarkup) {
+    public EditMsgAdapter(String chatId, String text, ReplyKeyboard replyMarkup) {
         super();
         this.setChatId(chatId);
         this.setText(text);
@@ -26,5 +27,10 @@ public class EditMsgWrap extends EditMessageText implements SendMsgEditMsgDecora
     @Override
     public void setMessageId(Integer messageId) {
         super.setMessageId(messageId);
+    }
+
+    @Override
+    public @NonNull String getText() {
+        return super.getText();
     }
 }
