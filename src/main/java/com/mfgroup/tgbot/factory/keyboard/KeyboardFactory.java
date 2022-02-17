@@ -6,7 +6,7 @@ import org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.*;
 
 import java.util.*;
 
-import static com.mfgroup.tgbot.cache.BotData.KeyboardFactoryButtonsText.*;
+import static com.mfgroup.tgbot.botdata.BotData.KeyboardFactoryButtonsText.*;
 
 @Component
 public class KeyboardFactory {

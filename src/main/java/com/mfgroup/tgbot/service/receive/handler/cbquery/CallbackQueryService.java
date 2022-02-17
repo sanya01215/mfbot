@@ -2,10 +2,10 @@ package com.mfgroup.tgbot.service.receive.handler.cbquery;
 
 import com.mfgroup.tgbot.dao.UserRepository;
 import com.mfgroup.tgbot.factory.keyboard.KeyboardFactory;
-import com.mfgroup.tgbot.model.message.adapter.SendMsgEditMsgAdapter;
-import com.mfgroup.tgbot.model.message.adapter.impl.EditMsgAdapter;
-import com.mfgroup.tgbot.model.message.adapter.impl.SendMsgAdapter;
-import com.mfgroup.tgbot.model.user.User;
+import com.mfgroup.tgbot.adapter.message.SendMsgEditMsgAdapter;
+import com.mfgroup.tgbot.adapter.message.impl.EditMsgAdapter;
+import com.mfgroup.tgbot.adapter.message.impl.SendMsgAdapter;
+import com.mfgroup.tgbot.domain.user.User;
 import com.mfgroup.tgbot.service.receive.handler.Handler;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -14,8 +14,8 @@ import org.telegram.telegrambots.meta.api.objects.CallbackQuery;
 import java.util.ArrayList;
 import java.util.List;
 
-import static com.mfgroup.tgbot.cache.BotData.CallbackQueryHandlerSpeech.*;
-import static com.mfgroup.tgbot.cache.BotData.UserPositionEnum.DONE_REGISTRATION;
+import static com.mfgroup.tgbot.botdata.BotData.CallbackQueryHandlerSpeech.*;
+import static com.mfgroup.tgbot.botdata.BotData.UserPositionEnum.DONE_REGISTRATION;
 
 
 @Service
@@ -30,7 +30,8 @@ public class CallbackQueryService implements Handler<CallbackQuery> {
 
     @Override
     @Transactional
-    public SendMsgEditMsgAdapter handleReceivedObj(CallbackQuery callbackQuery, User user) {
+    public SendMsgEditMsgAdapter handleReceivedObj(CallbackQuery callbackQuery, long userId) {
+        User user = userRepo.getById(userId);
         List<String> quizAnswers = user.getQuizAnswers();
         if(quizAnswers == null)quizAnswers = new ArrayList<>();
         Long chatId = callbackQuery.getMessage().getChatId();
@@ -91,6 +92,5 @@ public class CallbackQueryService implements Handler<CallbackQuery> {
 
     private void saveAnswersIntoRepo(UserRepository userRepo,List<String> answers ,User user){
         user.setQuizAnswers(answers);
-        userRepo.save(user);
     }
 }

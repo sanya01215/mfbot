@@ -1,7 +1,7 @@
 package com.mfgroup.tgbot.service.user;
 
 import com.mfgroup.tgbot.dao.UserRepository;
-import com.mfgroup.tgbot.model.user.User;
+import com.mfgroup.tgbot.domain.user.User;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -14,7 +14,7 @@ public class UserSearch {
     @Autowired
     private UserRepository userRepo;
     @Transactional
-    public String findBestTagMatchUser(List<String> matchTagSet, Long currentUserChatId){
+    public User findBestTagMatchUser(List<String> matchTagSet, Long currentUserChatId){
         User bestMatchUser=null;
         User givenUser = userRepo.getById(currentUserChatId);
         int bestMatchUserPoints=0;
@@ -32,9 +32,7 @@ public class UserSearch {
                 bestMatchUserPoints=newBestMatchUserPoints;
             }
         }
-        String s = bestMatchUser.toString();
-        String b =s;
-        return s;
+        return bestMatchUser;
     }
 
 }

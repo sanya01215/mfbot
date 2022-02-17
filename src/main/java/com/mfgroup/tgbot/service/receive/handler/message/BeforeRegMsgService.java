@@ -1,17 +1,20 @@
 package com.mfgroup.tgbot.service.receive.handler.message;
 
 import com.mfgroup.tgbot.dao.UserRepository;
+import com.mfgroup.tgbot.adapter.message.SendMsgEditMsgAdapter;
+import com.mfgroup.tgbot.adapter.message.impl.SendMsgAdapter;
+import com.mfgroup.tgbot.domain.user.User;
 import com.mfgroup.tgbot.factory.message.MessageFactory;
-import com.mfgroup.tgbot.model.user.User;
-import com.mfgroup.tgbot.model.message.adapter.SendMsgEditMsgAdapter;
-import com.mfgroup.tgbot.model.message.adapter.impl.SendMsgAdapter;
 import com.mfgroup.tgbot.service.receive.handler.Handler;
 import com.mfgroup.tgbot.service.user.UserSearch;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+import org.telegram.telegrambots.meta.api.objects.Chat;
 import org.telegram.telegrambots.meta.api.objects.Message;
 
-import static com.mfgroup.tgbot.cache.BotData.MessageHandlerSpeech.*;
-import static com.mfgroup.tgbot.cache.BotData.UserPositionEnum.*;
+import static com.mfgroup.tgbot.botdata.BotData.AfterRegMessageHandlerSpeech.INVALID_COMMAND;
+import static com.mfgroup.tgbot.botdata.BotData.BeforeRegMessageHandlerSpeech.*;
+import static com.mfgroup.tgbot.botdata.BotData.UserPositionEnum.*;
 
 @Service
 public class BeforeRegMsgService implements Handler<Message> {
@@ -29,52 +32,63 @@ public class BeforeRegMsgService implements Handler<Message> {
     }
 
     @Override
-    public SendMsgEditMsgAdapter handleReceivedObj(Message msg, User user) {
-        SendMsgEditMsgAdapter replyMsg = getRegistrationAnswers(msg,user);
+    @Transactional
+    public SendMsgEditMsgAdapter handleReceivedObj(Message msg, long userId) {
+        User persistUser = userRepo.getById(userId);
+        SendMsgEditMsgAdapter replyMsg = getRegistrationAnswers(msg,persistUser);
         replyMsg.setChatId(String.valueOf(msg.getChatId()));
-        userRepo.save(user);
         return replyMsg;
     }
 
-    private SendMsgAdapter getRegistrationAnswers(Message message, User user){
+    private SendMsgAdapter getRegistrationAnswers(Message message, User persistUser){
         SendMsgAdapter replyMsg = null;
-        switch (user.getPosition()) {
+        switch (persistUser.getPosition()) {
             case START:
                 replyMsg = msgFactory.getStartMsg();
-                user.setPosition(ACCEPT);
+                persistUser.setPosition(ACCEPT);
                 break;
             case ACCEPT:
                 if (message.getText().equals("Ok")) {
-                    user.setPosition(INPUT_FULLNAME);
+                    persistUser.setPosition(INPUT_FULLNAME);
                     replyMsg = msgFactory.getAcceptMsg();
                 }
                 break;
             case INPUT_FULLNAME:
-                replyMsg = msgFactory.getInputNameMsg(saveFullNameAndAskAge(message,user));
+                replyMsg = msgFactory.getInputNameMsg(saveFullNameAndAskAge(message,persistUser));
                 break;
             case INPUT_AGE:
-                replyMsg = msgFactory.getInputAgeMsg(saveAgeAndAskCity(message,user));
+                replyMsg = msgFactory.getInputAgeMsg(saveAgeAndAskCity(message,persistUser));
                 break;
             case INPUT_CITY:
-                replyMsg = msgFactory.getInputCityMsg(saveCityAndAskQuiz(message,user));
-                user.setPosition(INPUT_QUIZ);
+                replyMsg = msgFactory.getInputCityMsg(saveCityAndAskQuiz(message,persistUser));
+                persistUser.setPosition(INPUT_QUIZ);
                 break;
             default:
-                throw new RuntimeException("Invalid state. Reg Message class error, method choose");
+                throw new RuntimeException(INVALID_COMMAND);
         }
+        assert replyMsg != null;
         replyMsg.setChatId(String.valueOf(message.getChatId()));
         return replyMsg;
     }
     private String saveFullNameAndAskAge(Message message, User user) {
         String answer;
         if (message.hasText()) {
-            user.setName(message.getText());
-            user.setPosition(INPUT_AGE);
+            saveInfoAboutUserFromMsg(message,user);
             answer = TYPE_AGE;
         } else {
             answer = INCORRECT;
         }
         return answer;
+    }
+
+    private void saveInfoAboutUserFromMsg(Message message, User persistUser){
+        Chat msgChat = message.getChat();
+        persistUser.setName(message.getText());
+        persistUser.setTgUsername(msgChat.getUserName());
+        persistUser.setTgFirstName(msgChat.getFirstName());
+        persistUser.setTgLastName(msgChat.getLastName());
+        persistUser.setTgBio(msgChat.getBio());
+        persistUser.setPosition(INPUT_AGE);
     }
 
     private String saveAgeAndAskCity(Message message, User user) {

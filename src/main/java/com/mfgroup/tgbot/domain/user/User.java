@@ -1,6 +1,6 @@
-package com.mfgroup.tgbot.model.user;
+package com.mfgroup.tgbot.domain.user;
 
-import com.mfgroup.tgbot.cache.BotData;
+import com.mfgroup.tgbot.botdata.BotData;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -20,9 +20,10 @@ public class User {
     @Id
     @Column(name = "id", nullable = false)
     private Long chatId;
-    private String username;
-    private String inTelegramName;
-    private String inTelegramBio;
+    private String tgUsername;
+    private String tgFirstName;
+    private String tgLastName;
+    private String tgBio;
     private Date regDate;
 
     private String name;
@@ -37,9 +38,8 @@ public class User {
     @Column(name = "answers") // 3
     private List<String> quizAnswers;
 
-    public User(String username, Long chatId) {
+    public User(Long chatId) {
         regDate = Calendar.getInstance().getTime();
-        this.username = username;
         this.chatId = chatId;
     }
     public User(Long chatId, BotData.UserPositionEnum userPos) {
@@ -65,7 +65,7 @@ public class User {
             tags = tagsSb.toString();
         }
         return String.format(
-                "\nPerson: %s\n Telegram name %s\n Username: @%s\n ChatId: %s\n Telegram Bio: %s\n Reg time: %tT %tD \n His tags: \n %s\n",
-                name, inTelegramName, username, chatId,inTelegramBio ,regDate, regDate, tags);
+                "\nPerson: %s\n Telegram name %s %s\n Username: @%s\n ChatId: %s\n Telegram Bio: %s\n Reg time: %tT %tD \n His tags: \n %s\n",
+                name, tgFirstName, tgLastName, tgUsername, chatId,tgBio ,regDate, regDate, tags);
     }
 }

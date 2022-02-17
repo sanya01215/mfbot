@@ -1,10 +1,10 @@
 package com.mfgroup.tgbot.serviceTest.cbquery;
 
-import com.mfgroup.tgbot.cache.BotData;
+import com.mfgroup.tgbot.adapter.message.SendMsgEditMsgAdapter;
+import com.mfgroup.tgbot.botdata.BotData;
 import com.mfgroup.tgbot.dao.UserRepository;
+import com.mfgroup.tgbot.domain.user.User;
 import com.mfgroup.tgbot.factory.keyboard.KeyboardFactory;
-import com.mfgroup.tgbot.model.message.adapter.SendMsgEditMsgAdapter;
-import com.mfgroup.tgbot.model.user.User;
 import com.mfgroup.tgbot.service.receive.handler.cbquery.CallbackQueryService;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -16,6 +16,7 @@ import org.telegram.telegrambots.meta.api.objects.Chat;
 import org.telegram.telegrambots.meta.api.objects.Message;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
 public class CallbackQueryServiceTest {
@@ -50,16 +51,17 @@ public class CallbackQueryServiceTest {
         User user = new User();
         user.setPosition(BotData.UserPositionEnum.INPUT_QUIZ);
         user.setLastMsgId(321L);
+        when(userRepo.getById(chatIdLong)).thenReturn(user);
 //perform user add 2 tags
         receivedCbQuery.setData(testLaw);
-        callbackQueryService.handleReceivedObj(receivedCbQuery,user);
+        callbackQueryService.handleReceivedObj(receivedCbQuery,chatIdLong);
         receivedCbQuery.setData(testTravel);
-        SendMsgEditMsgAdapter sentTestMsg =callbackQueryService.handleReceivedObj(receivedCbQuery,user);
+        SendMsgEditMsgAdapter sentTestMsg =callbackQueryService.handleReceivedObj(receivedCbQuery,chatIdLong);
 //check if tags saved and present in msg(edited)
         assertThat(sentTestMsg.getText()).isEqualTo(expectMsg + testLaw + delimiter + testTravel);
 //perform remove 1 tag
         receivedCbQuery.setData(testRemove);
-        callbackQueryService.handleReceivedObj(receivedCbQuery,user);
+        callbackQueryService.handleReceivedObj(receivedCbQuery,chatIdLong);
 //check if tags -1 performed
         assertThat(sentTestMsg.getText()).isEqualTo(expectMsg + testLaw + delimiter + testTravel);
     }

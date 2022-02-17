@@ -1,9 +1,10 @@
 package com.mfgroup.tgbot.serviceTest.message;
 
+import com.mfgroup.tgbot.botdata.BotData;
 import com.mfgroup.tgbot.dao.UserRepository;
 import com.mfgroup.tgbot.factory.message.MessageFactory;
-import com.mfgroup.tgbot.model.message.adapter.SendMsgEditMsgAdapter;
-import com.mfgroup.tgbot.model.user.User;
+import com.mfgroup.tgbot.adapter.message.SendMsgEditMsgAdapter;
+import com.mfgroup.tgbot.domain.user.User;
 import com.mfgroup.tgbot.service.receive.handler.message.AfterRegMsgService;
 import com.mfgroup.tgbot.service.user.UserSearch;
 import org.junit.jupiter.api.Test;
@@ -51,6 +52,7 @@ public class AfterRegMsgServiceTest {
         //init users
         User user = new User();
         user.setChatId(chatIdL);
+        user.setPosition(BotData.UserPositionEnum.DONE_REGISTRATION);
         User user1 = new User();
         user.setChatId(222L);
         User user2 = new User();
@@ -61,9 +63,10 @@ public class AfterRegMsgServiceTest {
 
         //set repo.getAll returns list of users
         when(userRepo.findAll()).thenReturn(userList);
-
+        //set repo getbyid
+        when(userRepo.getById(chatIdL)).thenReturn(user);
         //perform send command
-        SendMsgEditMsgAdapter repliedMsg = afterRegMsgService.handleReceivedObj(message, user);
+        SendMsgEditMsgAdapter repliedMsg = afterRegMsgService.handleReceivedObj(message, chatIdL);
 
         //check if repliedMsgText equals users list of users
         assertThat(repliedMsg.getText()).isEqualTo(userList.toString());

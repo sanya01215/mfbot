@@ -1,6 +1,6 @@
-package com.mfgroup.tgbot.model.message.adapter.impl;
+package com.mfgroup.tgbot.adapter.message.impl;
 
-import com.mfgroup.tgbot.model.message.adapter.SendMsgEditMsgAdapter;
+import com.mfgroup.tgbot.adapter.message.SendMsgEditMsgAdapter;
 import lombok.NoArgsConstructor;
 import lombok.NonNull;
 import org.telegram.telegrambots.meta.api.methods.updatingmessages.EditMessageText;

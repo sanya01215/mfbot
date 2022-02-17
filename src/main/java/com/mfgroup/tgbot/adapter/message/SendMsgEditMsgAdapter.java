@@ -1,4 +1,4 @@
-package com.mfgroup.tgbot.model.message.adapter;
+package com.mfgroup.tgbot.adapter.message;
 
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.ReplyKeyboard;
 

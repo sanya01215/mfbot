@@ -1,6 +1,6 @@
 package com.mfgroup.tgbot.controller;
 
-import com.mfgroup.tgbot.model.message.adapter.SendMsgEditMsgAdapter;
+import com.mfgroup.tgbot.adapter.message.SendMsgEditMsgAdapter;
 import com.mfgroup.tgbot.service.receive.facade.UpdateHandleFacade;
 import com.mfgroup.tgbot.service.send.MessageSenderServ;
 import org.springframework.beans.factory.annotation.Autowired;

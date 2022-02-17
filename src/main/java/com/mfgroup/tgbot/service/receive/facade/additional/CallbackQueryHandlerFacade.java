@@ -1,14 +1,14 @@
 package com.mfgroup.tgbot.service.receive.facade.additional;
 
 import com.mfgroup.tgbot.dao.UserRepository;
-import com.mfgroup.tgbot.model.user.User;
-import com.mfgroup.tgbot.model.message.adapter.SendMsgEditMsgAdapter;
+import com.mfgroup.tgbot.adapter.message.SendMsgEditMsgAdapter;
+import com.mfgroup.tgbot.domain.user.User;
 import com.mfgroup.tgbot.service.receive.handler.cbquery.CallbackQueryService;
 import org.springframework.stereotype.Service;
 import org.telegram.telegrambots.meta.api.objects.CallbackQuery;
 import org.telegram.telegrambots.meta.api.objects.Message;
 
-import static com.mfgroup.tgbot.cache.BotData.UserPositionEnum.START;
+import static com.mfgroup.tgbot.botdata.BotData.UserPositionEnum.START;
 @Service
 public class CallbackQueryHandlerFacade implements ReceivedObjectHandlerFacade<CallbackQuery> {
     private final UserRepository userRepo;
@@ -24,7 +24,7 @@ public class CallbackQueryHandlerFacade implements ReceivedObjectHandlerFacade<C
         Message message = cbQuery.getMessage();
         User user = userRepo.findById(message.getChatId())
                 .orElseGet(() -> new User(message.getChatId(), START));
-        SendMsgEditMsgAdapter sendMsgEditMsgAdapter =cbQueryService.handleReceivedObj(cbQuery,user);
+        SendMsgEditMsgAdapter sendMsgEditMsgAdapter =cbQueryService.handleReceivedObj(cbQuery,user.getChatId());
         return sendMsgEditMsgAdapter;
     }
 }

@@ -1,7 +1,7 @@
 package com.mfgroup.tgbot.factory.message;
 
-import com.mfgroup.tgbot.cache.BotData;
-import com.mfgroup.tgbot.model.message.adapter.impl.SendMsgAdapter;
+import com.mfgroup.tgbot.botdata.BotData;
+import com.mfgroup.tgbot.adapter.message.impl.SendMsgAdapter;
 import com.mfgroup.tgbot.factory.keyboard.KeyboardFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -10,8 +10,8 @@ import org.telegram.telegrambots.meta.api.objects.replykeyboard.ReplyKeyboard;
 import java.util.HashMap;
 import java.util.Map;
 
-import static com.mfgroup.tgbot.cache.BotData.MessageHandlerSpeech.*;
-import static com.mfgroup.tgbot.cache.BotData.UserPositionEnum.*;
+import static com.mfgroup.tgbot.botdata.BotData.BeforeRegMessageHandlerSpeech.*;
+import static com.mfgroup.tgbot.botdata.BotData.UserPositionEnum.*;
 
 /**
  * All factory methods returns SendMsgWrap object with no chatId or wrong chatId,
